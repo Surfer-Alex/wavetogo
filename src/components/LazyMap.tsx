@@ -1,4 +1,4 @@
-'use client'
+
 import React, { useState ,useEffect ,useRef} from 'react';
 import { MapContainer,Marker, TileLayer,Popup,useMapEvents } from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
@@ -7,6 +7,7 @@ import surfSpotIcon from '../../public/images/Surf.png';
 import MarkerClusterGroup from '@changey/react-leaflet-markercluster';
 import '@changey/react-leaflet-markercluster/dist/styles.min.css';  
 import { LatLng,Map } from 'leaflet';
+
 
 
 
@@ -37,28 +38,39 @@ interface SpotInfo {
 const getSpotData = async (setSpotInfo: (spotInfo: SpotInfo[]) => void) => {
   try {
     const response = await fetch(
-      "http://services.surfline.com/kbyg/mapview?south=21.755561&west=119.438618&north=25.365470&east=122.025492");
+      "https://services.surfline.com/kbyg/mapview?south=21.755561&west=119.438618&north=25.365470&east=122.025492");
     const data = await response.json();
-  const spotNameData : SpotInfo[] = data.data.spots
+    const spotNameData : SpotInfo[] = data.data.spots
       setSpotInfo(spotNameData);
-      console.log(spotNameData);
+      
   } catch (error) {
     console.error(error);
   }
 };
 
+// async function getSpotByServer(setSpotInfo: (spotInfo: SpotInfo[]) => void) {
+//   const data = await fetch('/api/wave')
+//   if (!data.ok) {
+//     throw new Error('Failed to fetch data')
+//       }
+//   const formatedData = await data.json()
+//   console.log(formatedData)
+//   const spotInfo =await formatedData.data.spots
+//   setSpotInfo(spotInfo)
+// }
 
-const lazyMap = () => {
-    const [center, setCenter] = useState({ lat: 23.553118, lng: 121.0211024 });
+
+const LazyMap = () => {
+    // const [center, setCenter] = useState({ lat: 23.553118, lng: 121.0211024 });
     const [spotInfo, setSpotInfo] = useState<SpotInfo[] | null>(null);
     const [map, setMap] = useState<Map|null>(null);
     const markerRef = useRef<(typeof Marker)[]>([]);
     const ZOOM_LEVEL = 8;
-
+    
     useEffect(() => {
       getSpotData(setSpotInfo);
-      console.log(markerRef);
-      
+      // getSpotByServer(setSpotInfo);
+    
     }, []);
     useEffect(() => {
         
@@ -124,7 +136,7 @@ const lazyMap = () => {
           })}
  
           </div>
-          <MapContainer center={center} zoom={ZOOM_LEVEL} ref={setMap}  className="h-screen w-6/12">
+          <MapContainer center={{lat: 23.553118, lng: 121.0211024}} zoom={ZOOM_LEVEL} ref={setMap}  className="h-screen w-6/12">
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -148,4 +160,4 @@ const lazyMap = () => {
     );
   };
   
-  export default lazyMap;
+  export default LazyMap;
