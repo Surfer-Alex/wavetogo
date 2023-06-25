@@ -28,7 +28,8 @@ interface SpotInfo {
   };
   rating: { key: string };
   bestSeason: string;
-  _id:number
+  _id:number;
+  difficulty:string[];
 }
 
 const SpotIcon = new L.Icon({
@@ -94,6 +95,9 @@ const LazyMap = () => {
   // const [center, setCenter] = useState({ lat: 23.553118, lng: 121.0211024 });
   const [spotInfo, setSpotInfo] = useState<SpotInfo[] | null>(null);
   const [map, setMap] = useState<Mymap | null>(null);
+  
+  const [selectedLevel,setSelectedLevel]=useState<string|undefined>('');
+
   const markerRef = useRef<(typeof Marker)[]>([]);
   const ZOOM_LEVEL = 8;
 
@@ -138,12 +142,31 @@ const LazyMap = () => {
       });
     }
   };
+  
+   const filteredDiffcultyByLevel = selectedLevel
+    ? spotInfo?.filter((i) => i.difficulty.includes(selectedLevel))
+    : spotInfo;
+
+  //將陣列中提取所有等級的類型，並去除重複類型，最終得到一個包含所有不同類型的陣列
+  const splitLevels = spotInfo?.flatMap((i)=>i.difficulty)
+  const Levels = Array.from(new Set(splitLevels));
+  
 
   return (
     <>
       <div className="h-screen w-screen flex justify-end ">
+          
         <div className="h-screen w-1/2 flex flex-wrap overflow-auto">
-          {spotInfo?.map((i, idx) => {
+          <div className="h-[100px] w-full">
+            <button className={!selectedLevel ? "bg-indigo-300 p-2 rounded-md" : "p-2"} onClick={()=>setSelectedLevel('')}>ALL</button>
+            {Levels.map((level,idx)=>{
+              const isSelected = level === selectedLevel;
+              return(
+                <button className={isSelected?"bg-indigo-300 p-2 rounded-md" : "p-2"} key={idx} onClick={()=>setSelectedLevel(level)}>{level}</button>
+              )
+            })}
+          </div>
+          {filteredDiffcultyByLevel?.map((i, idx) => {
             return (
               
                 <div className="h-[200px] w-1/2" key={idx}>
@@ -153,6 +176,7 @@ const LazyMap = () => {
                   <div>天氣狀況:{i.weather.condition}</div>
                   <div>氣溫:{i.weather.temperature}。C</div>
                   <div>最佳季節:{i.bestSeason}</div>
+                  <div>等級:{i.difficulty}</div>
 
                   <button
                     className="font-bold border-2 border-black"
@@ -176,7 +200,7 @@ const LazyMap = () => {
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           />
           <MarkerClusterGroup showCoverageOnHover={false}>
-            {spotInfo?.map((i, idx) => {
+            {filteredDiffcultyByLevel?.map((i, idx) => {
               return (
                 <Marker
                   key={idx}
