@@ -2,8 +2,8 @@ import db from '@/firebase';
 import {
   collection,
   getDocs,
-  query,
-  where,
+  // query,
+  // where,
   // addDoc,
   // writeBatch,
   // doc,
@@ -18,8 +18,8 @@ export async function GET() {
     // console.log(docs);
 
     const ref = collection(db, 'surfSpots');
-    const q = query(ref, where('name', '!=', 'jialeshuei'));
-    const querySnapshot = await getDocs(q);
+    // const q = query(ref, where('name', '!=', 'jialeshuei'));
+    const querySnapshot = await getDocs(ref);
     const docs = querySnapshot.docs.map((doc) => doc.data());
     // console.log(docs);
 
@@ -31,7 +31,7 @@ export async function GET() {
 
 export async function POST() {
   try {
-
+    
 
     // const batch = writeBatch(db);
     // const docs = [
@@ -356,7 +356,7 @@ export async function POST() {
     
 
     // docs.forEach((i) => {
-    //   let docRef = doc(collection(db, 'surfSpots'));
+    //   let docRef = doc(collection(db, 'surfSpots'),i.name);
     //   batch.set(docRef, i);
     // });
     // // Commit the batch

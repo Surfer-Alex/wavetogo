@@ -1,3 +1,4 @@
+'use client';
 import React, { useState, useEffect, useRef } from 'react';
 import {
   MapContainer,
@@ -7,7 +8,7 @@ import {
   useMapEvents,
 } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
+import L, { LatLngBounds } from 'leaflet';
 import surfSpotIcon from '../../public/images/Surf.png';
 import MarkerClusterGroup from '@changey/react-leaflet-markercluster';
 import '@changey/react-leaflet-markercluster/dist/styles.min.css';
@@ -28,8 +29,9 @@ interface SpotInfo {
   };
   rating: { key: string };
   bestSeason: string;
-  _id:number;
-  difficulty:string[];
+  _id: number;
+  difficulty: string[];
+  region: string;
 }
 
 const SpotIcon = new L.Icon({
@@ -38,7 +40,7 @@ const SpotIcon = new L.Icon({
 });
 
 async function getFireSpotByServer() {
-  const data = await fetch('/api/firebase', { cache: 'no-store' });
+  const data = await fetch('/api/firebase');
 
   if (!data.ok) {
     throw new Error('Failed to fetch data');
@@ -49,12 +51,33 @@ async function getFireSpotByServer() {
   return formatedData;
 }
 
+async function getRegion(lat: number, lon: number) {
+  try {
+    const response = await fetch(`/api/geocoding/?lat=${lat}&lon=${lon}`,{ cache: 'force-cache' });
+    const data = await response.json();
+    const results = data.results;
+    //這裡超複雜，因為google api資料排序問題，找不到規則，要一直切資料
+    const filteredRegionString = await data.results[results.length - 3]
+      .formatted_address;
+    const taiwanIndex = filteredRegionString.indexOf('台灣');
+    const extractedString = filteredRegionString.slice(
+      taiwanIndex + 2,
+      taiwanIndex + 5
+    );
+
+    return extractedString;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 // eslint-disable-next-line no-unused-vars
 const getSpotData = async (setSpotInfo: (spotInfo: SpotInfo[]) => void) => {
   try {
     const response = await fetch(
-      'https://services.surfline.com/kbyg/mapview?south=21.755561&west=119.438618&north=25.365470&east=122.025492'
-      , { cache: 'no-store' });
+      'https://services.surfline.com/kbyg/mapview?south=21.755561&west=119.438618&north=25.365470&east=122.025492',
+      { cache: 'no-store' }
+    );
     const data = await response.json();
     const spotData = data.data.spots;
 
@@ -72,7 +95,18 @@ const getSpotData = async (setSpotInfo: (spotInfo: SpotInfo[]) => void) => {
         newArray.push({ ...map.get(fireSpotInfo[j].name), ...fireSpotInfo[j] });
       }
     }
-    console.log(newArray);
+
+    // 遍歷數組並更新每個元素的region
+    // for (const item of newArray) {
+    //   const region = await getRegion(item.lat, item.lon);
+    //   item.region = region;
+    // }
+    const promises = newArray.map(item => getRegion(item.lat, item.lon));
+const regions = await Promise.all(promises);
+newArray.forEach((item, index) => {
+  item.region = regions[index];
+});
+
     setSpotInfo(newArray);
   } catch (error) {
     console.error(error);
@@ -90,13 +124,13 @@ const getSpotData = async (setSpotInfo: (spotInfo: SpotInfo[]) => void) => {
 //   setSpotInfo(spotInfo)
 // }
 
-
 const LazyMap = () => {
   // const [center, setCenter] = useState({ lat: 23.553118, lng: 121.0211024 });
   const [spotInfo, setSpotInfo] = useState<SpotInfo[] | null>(null);
   const [map, setMap] = useState<Mymap | null>(null);
-  
-  const [selectedLevel,setSelectedLevel]=useState<string|undefined>('');
+  const [bounds, setBounds] = useState<LatLngBounds | undefined>();
+  const [selectedLevel, setSelectedLevel] = useState<string | undefined>('');
+  const [selectedRegion, setSelectedRegion] = useState<string | undefined>('');
 
   const markerRef = useRef<(typeof Marker)[]>([]);
   const ZOOM_LEVEL = 8;
@@ -106,9 +140,8 @@ const LazyMap = () => {
     // getSpotByServer(setSpotInfo);
   }, []);
   useEffect(() => {
-    console.log(spotInfo);
-    
-  }, [spotInfo]);
+    setBounds(map?.getBounds());
+  }, [map]);
 
   //定位功能
   function LocationMarker() {
@@ -122,7 +155,7 @@ const LazyMap = () => {
         map.flyTo(e.latlng, map.getZoom());
       },
     });
-    console.log(position);
+
     return position === null ? null : (
       <Marker position={position} icon={SpotIcon}>
         <Popup>You are here</Popup>
@@ -142,50 +175,109 @@ const LazyMap = () => {
       });
     }
   };
-  
-   const filteredDiffcultyByLevel = selectedLevel
-    ? spotInfo?.filter((i) => i.difficulty.includes(selectedLevel))
-    : spotInfo;
+
+  map?.once('moveend', () => {
+    const bounds = map.getBounds();
+    setBounds(bounds);
+  });
+  let filteredMarkers = spotInfo?.filter((marker) => {
+    return bounds?.contains([marker.lat, marker.lon]);
+  });
+
+  //  const filteredDiffcultyByLevel = selectedLevel
+  //   ? spotInfo?.filter((i) => i.difficulty.includes(selectedLevel))
+  //   : spotInfo;
+
+  const filteredDiffcultyByLevel = filteredMarkers?.filter((i) => {
+    // 篩選困難度
+    const difficultyMatch = selectedLevel
+      ? i.difficulty.includes(selectedLevel)
+      : spotInfo;
+
+    // 篩選地區
+    const regionMatch = selectedRegion ? i.region === selectedRegion : spotInfo;
+
+    // 返回最終結果
+    return difficultyMatch && regionMatch;
+  });
 
   //將陣列中提取所有等級的類型，並去除重複類型，最終得到一個包含所有不同類型的陣列
-  const splitLevels = spotInfo?.flatMap((i)=>i.difficulty)
+  const splitLevels = spotInfo?.flatMap((i) => i.difficulty);
   const Levels = Array.from(new Set(splitLevels));
-  
+
+  const splitRegion = spotInfo?.flatMap((i) => i.region);
+  const regions = Array.from(new Set(splitRegion));
 
   return (
     <>
       <div className="h-screen w-screen flex justify-end ">
-          
         <div className="h-screen w-1/2 flex flex-wrap overflow-auto">
           <div className="h-[100px] w-full">
-            <button className={!selectedLevel ? "bg-indigo-300 p-2 rounded-md" : "p-2"} onClick={()=>setSelectedLevel('')}>ALL</button>
-            {Levels.map((level,idx)=>{
+            <button
+              className={
+                !selectedLevel ? 'bg-indigo-300 p-2 rounded-md' : 'p-2'
+              }
+              onClick={() => setSelectedLevel('')}
+            >
+              ALL
+            </button>
+            {Levels.map((level, idx) => {
               const isSelected = level === selectedLevel;
-              return(
-                <button className={isSelected?"bg-indigo-300 p-2 rounded-md" : "p-2"} key={idx} onClick={()=>setSelectedLevel(level)}>{level}</button>
-              )
+              return (
+                <button
+                  className={
+                    isSelected ? 'bg-indigo-300 p-2 rounded-md' : 'p-2'
+                  }
+                  key={idx}
+                  onClick={() => setSelectedLevel(level)}
+                >
+                  {level}
+                </button>
+              );
+            })}
+          </div>
+          <div className="h-[100px] w-full">
+            <button
+              className={
+                !selectedRegion ? 'bg-indigo-300 p-2 rounded-md' : 'p-2'
+              }
+              onClick={() => setSelectedRegion('')}
+            >
+              ALL
+            </button>
+            {regions.map((region, idx) => {
+              const isSelected = region === selectedRegion;
+              return (
+                <button
+                  className={
+                    isSelected ? 'bg-indigo-300 p-2 rounded-md' : 'p-2'
+                  }
+                  key={idx}
+                  onClick={() => setSelectedRegion(region)}
+                >
+                  {region}
+                </button>
+              );
             })}
           </div>
           {filteredDiffcultyByLevel?.map((i, idx) => {
             return (
-              
-                <div className="h-[200px] w-1/2" key={idx}>
-                  <div className="font-bold text-blue-700">{i.name}</div>
-                  <div>{i.conditions.value}</div>
-                  <div>最大浪高:{i.waveHeight.max} M</div>
-                  <div>天氣狀況:{i.weather.condition}</div>
-                  <div>氣溫:{i.weather.temperature}。C</div>
-                  <div>最佳季節:{i.bestSeason}</div>
-                  <div>等級:{i.difficulty}</div>
+              <div className="h-[200px] w-1/2" key={idx}>
+                <div className="font-bold text-blue-700">{i.name}</div>
+                <div>{i.conditions.value}</div>
+                <div>最大浪高:{i.waveHeight.max} M</div>
+                <div>天氣狀況:{i.weather.condition}</div>
+                <div>氣溫:{i.weather.temperature}。C</div>
+                <div>等級:{i.difficulty ? i.difficulty : '無資料'}</div>
+                <div>區域:{i.region ? i.region : '無資料'}</div>
 
-                  <button
-                    className="font-bold border-2 border-black"
-                    onClick={() => flyToSpot(i.lat, i.lon, idx)}
-                  >
-                    檢視
-                  </button>
-                </div>
-              
+                <button
+                  className="font-bold border-2 border-black"
+                  onClick={() => flyToSpot(i.lat, i.lon, idx)}
+                >
+                  檢視
+                </button>
+              </div>
             );
           })}
         </div>
