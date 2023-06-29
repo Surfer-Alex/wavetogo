@@ -74,6 +74,7 @@ async function getRegion(lat: number, lon: number) {
 // eslint-disable-next-line no-unused-vars
 const getSpotData = async (setSpotInfo: (spotInfo: SpotInfo[]) => void) => {
   try {
+    
     const response = await fetch(
       'https://services.surfline.com/kbyg/mapview?south=21.755561&west=119.438618&north=25.365470&east=122.025492',
       { cache: 'no-store' }

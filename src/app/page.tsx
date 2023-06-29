@@ -2,7 +2,10 @@
 
 import Image from 'next/image'
 import landing from '../../public/images/landing.jpg'
+
 export default function Home() {
+
+    
   return (
     <main className="flex min-h-[calc(100%-50px)] flex-col items-center">
       <div className='max-w-[1280px] w-full '>

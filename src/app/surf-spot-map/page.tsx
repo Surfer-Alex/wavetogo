@@ -7,9 +7,9 @@ const Map = dynamic(
     ssr: false } // This line is important. It's what prevents server-side render
 )
 
-function page() {
+function Page() {
   
   return <Map />
 }
 
-export default page
+export default Page
