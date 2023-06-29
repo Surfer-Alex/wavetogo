@@ -52,6 +52,10 @@ type TideInfo = {
   tideTimeData: number[];
 } | null;
 
+interface ChartProps {
+  id: string;
+}
+
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -71,13 +75,15 @@ ChartJS.register(
 //     return arr.filter((_, index) => index % divisor === 0);
 //   }
 
+
 const getForecastData = async (
   setWaveInfo: React.Dispatch<React.SetStateAction<WaveInfo>>,
   setWindInfo: React.Dispatch<React.SetStateAction<WindInfo>>,
-  setTideInfo: React.Dispatch<React.SetStateAction<TideInfo>>
+  setTideInfo: React.Dispatch<React.SetStateAction<TideInfo>>,
+  id:string
 ) => {
   try {
-    const forecastRes = await fetch('/api/wave');
+    const forecastRes = await fetch(`/api/wave/?id=${id}`);
 
     const parsedForecast = await forecastRes.json();
 
@@ -110,7 +116,9 @@ const getForecastData = async (
   }
 };
 
-export default function Chart() {
+
+export default function Chart({id}:ChartProps) {
+  
   const chartRef = useRef<ChartJS<'bar'>>(null);
   const chart2Ref = useRef<ChartJS<'bar'>>(null);
 
@@ -119,7 +127,7 @@ export default function Chart() {
   const [tideInfo, setTideInfo] = useState<TideInfo>(null);
 
   useEffect(() => {
-    getForecastData(setWaveInfo, setWindInfo, setTideInfo);
+    getForecastData(setWaveInfo, setWindInfo, setTideInfo,id);
   }, []);
 
   const hover1 = (move: React.MouseEvent) => {
@@ -205,7 +213,7 @@ export default function Chart() {
       {
         label: '潮汐高度',
         data: tideInfo?.tideData ?? [],
-        backgroundColor: 'rgba(0, 173, 247, 1)',
+        backgroundColor: '#3d3d3d',
         fill: true,
         segment: {
           borderColor: (ctx) => up(ctx, '#a1cfff') || down(ctx, '#863031'),
@@ -414,7 +422,7 @@ export default function Chart() {
         position: 'top' as const,
       },
       title: {
-        display: true,
+        display: false,
         text: 'Chart.js Line Chart',
       },
       annotation: {
@@ -440,7 +448,7 @@ export default function Chart() {
 
   return (
     <>
-      <div className="h-[500px] p-5 flex justify-center">
+      <div className="h-[500px] px-5 flex justify-center">
         <Bar
           options={options}
           data={waveChartData}
@@ -448,7 +456,7 @@ export default function Chart() {
           onMouseMove={hover1}
         />
       </div>
-      <div className="h-[500px] p-5 flex justify-center">
+      <div className="h-[500px] px-5 flex justify-center">
         <Bar
           options={windOptions}
           data={windChartData}
@@ -456,7 +464,7 @@ export default function Chart() {
           onMouseMove={hover2}
         />
       </div>
-      <div className="h-[500px] p-5 flex justify-center">
+      <div className="h-[500px] px-5 flex justify-center">
         <Line options={tideOptions} data={tidesData} />
       </div>
     </>

@@ -11,7 +11,7 @@ export default function Page({ params }: { params: { slug: string } }) {
           浪點回報區
         </div>
       </div>
-      <Chart />
+      <Chart id={params.slug} />
     </>
   );
 }
