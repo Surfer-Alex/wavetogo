@@ -448,7 +448,7 @@ export default function Chart({id}:ChartProps) {
 
   return (
     <>
-      <div className="h-[500px] px-5 flex justify-center">
+      <div className="h-[500px] w-full px-5 flex justify-center">
         <Bar
           options={options}
           data={waveChartData}
@@ -456,7 +456,7 @@ export default function Chart({id}:ChartProps) {
           onMouseMove={hover1}
         />
       </div>
-      <div className="h-[500px] px-5 flex justify-center">
+      <div className="h-[500px] w-full px-5 flex justify-center">
         <Bar
           options={windOptions}
           data={windChartData}
@@ -464,7 +464,7 @@ export default function Chart({id}:ChartProps) {
           onMouseMove={hover2}
         />
       </div>
-      <div className="h-[500px] px-5 flex justify-center">
+      <div className="h-[500px] w-full px-5 flex justify-center">
         <Line options={tideOptions} data={tidesData} />
       </div>
     </>
