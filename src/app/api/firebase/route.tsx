@@ -2,28 +2,32 @@ import db from '@/firebase';
 import {
   collection,
   getDocs,
-  // query,
-  // where,
+  query,
+  where,
   // addDoc,
   // writeBatch,
   // doc,
 } from 'firebase/firestore';
 import { NextResponse } from 'next/server';
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    // const query = collection(db, 'surfSpots');
-    // const querySnapshot = await getDocs(query);
-    // const docs = querySnapshot.docs.map(doc => doc.data());
-    // console.log(docs);
-
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
     const ref = collection(db, 'surfSpots');
-    // const q = query(ref, where('name', '!=', 'jialeshuei'));
-    const querySnapshot = await getDocs(ref);
-    const docs = querySnapshot.docs.map((doc) => doc.data());
-    // console.log(docs);
-
-    return NextResponse.json(docs);
+    if (id) {
+      const q = query(ref, where('id', '==', id));
+      const querySnapshot = await getDocs(q);
+      const docs = querySnapshot.docs.map((doc) => doc.data());
+      
+      
+      return NextResponse.json(docs);
+    } else {
+      const querySnapshot = await getDocs(ref);
+      const docs = querySnapshot.docs.map((doc) => doc.data());
+      // console.log(docs);
+      return NextResponse.json(docs);
+    }
   } catch (error) {
     return new NextResponse(error as undefined);
   }
@@ -31,7 +35,22 @@ export async function GET() {
 
 export async function POST() {
   try {
-    
+    // const response = await fetch(
+    //   'https://services.surfline.com/kbyg/mapview?south=21.755561&west=119.438618&north=25.365470&east=122.025492',
+    //   { cache: 'no-store' }
+    // );
+    // const data = await response.json();
+    // const spotData = data.data.spots;
+    // const ref = collection(db, 'surfSpots');
+    // const querySnapshot = await getDocs(ref);
+    // const fireSpotInfo = querySnapshot.docs.map((doc) => doc.data());
+
+    // const newSpotInfo= fireSpotInfo.map(
+    //   (item2)=>{
+    //     const item1 = spotData.find(item=>item.name === item2.name)
+    //     return {...item2,id:item1._id}
+    //   }
+    // );
 
     // const batch = writeBatch(db);
     // const docs = [
@@ -352,8 +371,6 @@ export async function POST() {
     //     name: 'Toucheng' },
     //    // Add more documents here
     // ];
-
-    
 
     // docs.forEach((i) => {
     //   let docRef = doc(collection(db, 'surfSpots'),i.name);

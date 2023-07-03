@@ -7,6 +7,18 @@ const nextConfig = {
 //     // !! WARN !!
 //     ignoreBuildErrors: true,
 //   },
+images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'api.mapbox.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'wa.cdn-surfline.com',
+      },
+    ],
+  },
 }
 
 module.exports = nextConfig
