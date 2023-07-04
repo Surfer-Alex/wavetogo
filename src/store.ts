@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-// import {devtools} from 'zustand/middleware'
-
+import { devtools, persist, createJSONStorage } from 'zustand/middleware';
+import { UserInfo } from '@firebase/auth-types';
 interface Spot {
   _id: string;
   weather: {
@@ -34,8 +34,8 @@ interface Spot {
     min: number;
     max: number;
   };
-  lat:number;
-  lon:number;
+  lat: number;
+  lon: number;
 }
 
 interface State {
@@ -44,7 +44,7 @@ interface State {
       spots: Spot[];
     };
   };
-  fetch: (_pond: string) => void;
+  fetch: (pond: string) => void;
 }
 
 export const useStore = create<State>((set) => ({
@@ -64,6 +64,28 @@ export const useStore = create<State>((set) => ({
       },
     });
   },
+}));
+
+export const userStore = create(
+  devtools(
+    persist(
+      () => ({
+        uid: '',
+      }),
+      {
+        name: 'user-auth', // name of the item in the storage (must be unique)
+        storage: createJSONStorage(() => localStorage), // (optional) by default, 'localStorage' is used
+      }
+    )
+  )
+);
+
+type UserPrivateState = {
+  userInfo: UserInfo | null;
+};
+
+export const userPrivateStore = create<UserPrivateState>(() => ({
+  userInfo: null,
 }));
 
 // setData:()=>{
