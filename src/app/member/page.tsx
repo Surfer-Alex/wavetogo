@@ -23,7 +23,7 @@ function Page() {
     setUserData();
     console.log(user);
   }, [user]);
-  // console.log(user);
+  
 
   const getUserInfo = userPrivateStore((state) => state.userInfo);
   // console.log(getUserInfo);

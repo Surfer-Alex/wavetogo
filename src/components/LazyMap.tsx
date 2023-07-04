@@ -14,6 +14,7 @@ import navigation from '../../public/images/navigation.png';
 import MarkerClusterGroup from '@changey/react-leaflet-markercluster';
 import '@changey/react-leaflet-markercluster/dist/styles.min.css';
 import { LatLng, Map as Mymap } from 'leaflet';
+import Link from 'next/link';
 
 interface SpotInfo {
   lat: number;
@@ -222,12 +223,12 @@ const LazyMap = () => {
 
   return (
     <>
-      <div className="h-screen w-screen flex justify-end ">
+      <div className="h-screen w-screen flex justify-end font-bold">
         <div className="h-screen w-1/2 flex flex-wrap overflow-auto">
           <div className="h-[100px] w-full">
             <button
               className={
-                !selectedLevel ? 'bg-indigo-300 p-2 rounded-md' : 'p-2'
+                !selectedLevel ? ' bg-gray-900 text-white p-2 rounded-md' : 'p-2'
               }
               onClick={() => setSelectedLevel('')}
             >
@@ -238,7 +239,7 @@ const LazyMap = () => {
               return (
                 <button
                   className={
-                    isSelected ? 'bg-indigo-300 p-2 rounded-md' : 'p-2'
+                    isSelected ? 'bg-gray-900 text-white p-2 rounded-md' : 'p-2'
                   }
                   key={idx}
                   onClick={() => setSelectedLevel(level)}
@@ -251,7 +252,7 @@ const LazyMap = () => {
           <div className="h-[100px] w-full">
             <button
               className={
-                !selectedRegion ? 'bg-indigo-300 p-2 rounded-md' : 'p-2'
+                !selectedRegion ? 'bg-gray-900 text-white p-2 rounded-md' : 'p-2'
               }
               onClick={() => setSelectedRegion('')}
             >
@@ -262,7 +263,7 @@ const LazyMap = () => {
               return (
                 <button
                   className={
-                    isSelected ? 'bg-indigo-300 p-2 rounded-md' : 'p-2'
+                    isSelected ? 'bg-gray-900 text-white p-2 rounded-md' : 'p-2'
                   }
                   key={idx}
                   onClick={() => setSelectedRegion(region)}
@@ -275,14 +276,15 @@ const LazyMap = () => {
           {filteredDiffcultyByLevel?.map((i, idx) => {
             return (
               <div className="h-[200px] w-1/2" key={idx}>
-                <div className="font-bold text-blue-700">{i.name}</div>
-                <div>{i.conditions.value}</div>
-                <div>最大浪高:{i.waveHeight.max} M</div>
-                <div>天氣狀況:{i.weather.condition}</div>
-                <div>氣溫:{i.weather.temperature}。C</div>
-                <div>等級:{i.difficulty ? i.difficulty : '無資料'}</div>
-                <div>區域:{i.region ? i.region : '無資料'}</div>
-
+                <Link href={`/surf-report/${i._id}`}>
+                  <div className="font-bold text-blue-700">{i.name}</div>
+                  <div>{i.conditions.value}</div>
+                  <div>最大浪高:{i.waveHeight.max} M</div>
+                  <div>天氣狀況:{i.weather.condition}</div>
+                  <div>氣溫:{i.weather.temperature}。C</div>
+                  <div>等級:{i.difficulty ? i.difficulty : '無資料'}</div>
+                  <div>區域:{i.region ? i.region : '無資料'}</div>
+                </Link>
                 <button
                   className="font-bold border-2 border-black"
                   onClick={() => flyToSpot(i.lat, i.lon, idx)}
