@@ -75,12 +75,11 @@ ChartJS.register(
 //     return arr.filter((_, index) => index % divisor === 0);
 //   }
 
-
 const getForecastData = async (
   setWaveInfo: React.Dispatch<React.SetStateAction<WaveInfo>>,
   setWindInfo: React.Dispatch<React.SetStateAction<WindInfo>>,
   setTideInfo: React.Dispatch<React.SetStateAction<TideInfo>>,
-  id:string
+  id: string
 ) => {
   try {
     const forecastRes = await fetch(`/api/wave/?id=${id}`);
@@ -103,7 +102,7 @@ const getForecastData = async (
       .filter((_: number, index: number) => index % 3 === 0)
       .map((i: WindData) => i.speed);
     setWindInfo({ windData, windTimeData });
-    
+
     const tideTimeData = parsedForecast.tideData.data.tides.map(
       (i: TideData) => i.timestamp
     );
@@ -116,9 +115,7 @@ const getForecastData = async (
   }
 };
 
-
-export default function Chart({id}:ChartProps) {
-  
+export default function Chart({ id }: ChartProps) {
   const chartRef = useRef<ChartJS<'bar'>>(null);
   const chart2Ref = useRef<ChartJS<'bar'>>(null);
 
@@ -127,7 +124,7 @@ export default function Chart({id}:ChartProps) {
   const [tideInfo, setTideInfo] = useState<TideInfo>(null);
 
   useEffect(() => {
-    getForecastData(setWaveInfo, setWindInfo, setTideInfo,id);
+    getForecastData(setWaveInfo, setWindInfo, setTideInfo, id);
   }, []);
 
   const hover1 = (move: React.MouseEvent) => {
@@ -265,7 +262,7 @@ export default function Chart({id}:ChartProps) {
       tooltip: {
         callbacks: {
           footer: (tooltipItems: { dataIndex: number }[]) => {
-            let index = tooltipItems[0].dataIndex;
+            const index = tooltipItems[0].dataIndex;
             let timeString;
             if (waveInfo && waveInfo.waveTimeData) {
               timeString = new Date(
@@ -340,7 +337,7 @@ export default function Chart({id}:ChartProps) {
       tooltip: {
         callbacks: {
           footer: (tooltipItems: { dataIndex: number }[]) => {
-            let index = tooltipItems[0].dataIndex;
+            const index = tooltipItems[0].dataIndex;
             let timeString;
             if (windInfo && windInfo.windTimeData) {
               timeString = new Date(

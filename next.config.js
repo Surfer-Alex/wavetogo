@@ -17,6 +17,10 @@ images: {
         protocol: 'https',
         hostname: 'wa.cdn-surfline.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+      },
     ],
   },
 }
