@@ -275,7 +275,7 @@ const LazyMap = () => {
           </div>
           {filteredDiffcultyByLevel?.map((i, idx) => {
             return (
-              <div className="h-[200px] w-1/2" key={idx}>
+              <div className="bg-slate-300 h-[200px] w-1/2 border-2 px-4 rounded hover:shadow-lg transform hover:scale-105 hover:-translate-y-1  transition duration-200 hover:z-10" key={idx}>
                 <Link href={`/surf-report/${i._id}`}>
                   <div className="font-bold text-blue-700">{i.name}</div>
                   <div>{i.conditions.value}</div>
@@ -286,7 +286,7 @@ const LazyMap = () => {
                   <div>區域:{i.region ? i.region : '無資料'}</div>
                 </Link>
                 <button
-                  className="font-bold border-2 border-black"
+                  className="  font-bold border-2 border-black"
                   onClick={() => flyToSpot(i.lat, i.lon, idx)}
                 >
                   檢視

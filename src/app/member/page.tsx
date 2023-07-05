@@ -1,12 +1,13 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useSignInWithGoogle } from 'react-firebase-hooks/auth';
-import { signOut } from "firebase/auth";
+import { signOut } from 'firebase/auth';
 import { db, auth } from '@/firebase';
 import { setDoc, doc, getDoc } from 'firebase/firestore';
 import { userStore, userPrivateStore } from '@/store';
 import { UserInfo } from '@firebase/auth-types';
-
+import Image from 'next/image';
+import userIcon from '../../../public/images/icons8-user.gif' 
 
 function Page() {
   const [signInWithGoogle, user, loading, fbError] = useSignInWithGoogle(auth);
@@ -23,7 +24,6 @@ function Page() {
     setUserData();
     console.log(user);
   }, [user]);
-  
 
   const getUserInfo = userPrivateStore((state) => state.userInfo);
   // console.log(getUserInfo);
@@ -33,7 +33,7 @@ function Page() {
       if (user) {
         const { uid, email, displayName, phoneNumber, photoURL, providerId } =
           user.user.providerData[0];
-        const newUser = {
+        const newUser:UserInfo = {
           uid: uid,
           email: email,
           displayName: displayName,
@@ -42,7 +42,7 @@ function Page() {
           providerId: providerId,
         };
         await setDoc(doc(db, 'users', uid), newUser);
-        userStore.setState({ uid: uid });
+        userStore.setState({ uid: uid,photoURL:photoURL||'' });
         userPrivateStore.setState({ userInfo: newUser });
         setIsUserLoggedIn(true);
       }
@@ -65,26 +65,47 @@ function Page() {
 
   async function Logout() {
     await signOut(auth);
-    userStore.setState({ uid:'' });
-    userPrivateStore.setState({ userInfo: null});
+    userStore.setState({ uid: '',photoURL:''});
+    userPrivateStore.setState({ userInfo: null });
     setIsUserLoggedIn(false);
   }
-  
 
   return (
-    <div>
-      {!isUserLoggedIn && (
-        <button onClick={() => signInWithGoogle()}>Continue with Google</button>
-      )}
-      {isUserLoggedIn && <div>User:{getUserInfo?.displayName}</div>}
-      
-      {isUserLoggedIn ? (
-          <button
-            onClick={Logout}
-          >
-            Sign out
+    <div className="w-full flex justify-center">
+      <div className="max-w-[1280px] w-full flex">
+        {!isUserLoggedIn && (
+          <div className='flex justify-center'>
+          <button onClick={() => signInWithGoogle()}>
+            Continue with Google
           </button>
-        ) : null}
+          </div>
+        )}
+        {isUserLoggedIn && (
+          <div className="w-1/4 flex flex-col">
+            <button className="h-[100px]">個人資訊</button>
+            <button className="h-[100px]">收藏浪點</button>
+            <button className="h-[100px]">已回報浪況</button>
+          </div>
+        )}
+        
+          {isUserLoggedIn && (
+            <div className="w-3/4 flex flex-col items-center">
+              <Image
+                width={100}
+                height={100}
+                alt="user icon"
+                src={getUserInfo?.photoURL || userIcon}
+                className='rounded-full'
+              />
+              <div>{getUserInfo?.displayName}</div>
+              <div>{getUserInfo?.email}</div>
+              <button className=" bg-slate-600 text-white p-2" onClick={Logout}>
+                Sign out
+              </button>
+            </div>
+          )}
+        
+      </div>
     </div>
   );
 }

@@ -46,7 +46,9 @@ interface State {
   };
   fetch: (pond: string) => void;
 }
-
+type UserPrivateState = {
+  userInfo: UserInfo | null;
+};
 export const useStore = create<State>((set) => ({
   spotData: {
     data: {
@@ -71,6 +73,7 @@ export const userStore = create(
     persist(
       () => ({
         uid: '',
+        photoURL:'',
       }),
       {
         name: 'user-auth', // name of the item in the storage (must be unique)
@@ -80,9 +83,7 @@ export const userStore = create(
   )
 );
 
-type UserPrivateState = {
-  userInfo: UserInfo | null;
-};
+
 
 export const userPrivateStore = create<UserPrivateState>(() => ({
   userInfo: null,
