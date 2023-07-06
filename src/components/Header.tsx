@@ -12,7 +12,7 @@ const Header = () => {
         setShowLogo(true);
     }, [showLogo]);
   const userIcon = userStore((state)=>state.photoURL);
-  console.log(userIcon);
+  
   
   return (
     <div className="flex h-[50px] sticky top-0 text-white bg-[rgb(0,0,0)] ">
