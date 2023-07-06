@@ -1,9 +1,12 @@
 
 import Image from 'next/image'
 import landing from '../../public/images/landing.jpg'
+import FavoritesList from '@/components/FavoritesList'
 
-export default function Home() {
+export default async function Home() {
   
+  
+
   return (
     <main className="flex min-h-[calc(100%-50px)] flex-col items-center">
       <div className='max-w-[1280px] w-full '>
@@ -20,14 +23,7 @@ export default function Home() {
           </div>
         </div>  
         <div className='w-full flex flex-col'>
-          <div>Favorites</div>
-          <div className='flex'>
-            <div className='max-w-[258px] w-full flex flex-col'>content1</div> 
-            <div className='max-w-[258px] w-full flex flex-col'>content2</div>
-            <div className='max-w-[258px] w-full flex flex-col'>content3</div>
-            <div className='max-w-[258px] w-full flex flex-col'>content4</div>
-            <div className='max-w-[258px] w-full flex flex-col'>content5</div>  
-          </div>
+          <FavoritesList/>
         </div>  
         <div className='w-full flex flex-col'>
         <div>Forecast</div>

@@ -19,6 +19,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { userStore } from '@/store';
 
+
 interface SpotInfo {
   lat: number;
   lon: number;
@@ -234,7 +235,7 @@ const LazyMap = () => {
 
   const splitRegion = spotInfo?.flatMap((i) => i.region);
   const regions = Array.from(new Set(splitRegion));
-  //favorites初始值
+
   const fetchFavorites=async()=>{
     try{
       const data = await fetch(`/api/firebase/favorites/?uid=${uid}`)
@@ -257,8 +258,6 @@ const LazyMap = () => {
       }else{
         setFavorites([id])
       }
-      
-     
     }catch(err){
       console.error('Error fetching favorites:', err);
     }
