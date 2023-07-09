@@ -3,45 +3,42 @@ import { useEffect, useState } from 'react';
 import { useStore, userStore } from '@/store';
 import ArrowLeftOutlinedIcon from '@mui/icons-material/ArrowLeftOutlined';
 import ArrowRightOutlinedIcon from '@mui/icons-material/ArrowRightOutlined';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
 import Image from 'next/image';
 import { Spot } from '@/store';
 import SpotChart from './SpotChart';
-import Link from 'next/link';
 type ColorClasses = {
   [key: string]: string;
 };
 
-function FavoritesList() {
+function RandomList() {
   const [login, setLogin] = useState(false);
-  const [favoritesSpotInfo, setFavoritesSpotInfo] = useState<Spot[]>([])
+  const [randomSpots, setRandomSpots] = useState<Spot[]>([]);
   const uid = userStore.getState().uid;
   const { spotData } = useStore();
   
   useEffect(() => {
     if (uid) {
       setLogin(true);
-      fetchFavorites();
     }
   }, []);
+  useEffect(() => {
+    getRandomSpots();
+  }, [spotData]); 
 
-  const fetchFavorites = async () => {
-    try {
-      const data = await fetch(`/api/firebase/favorites/?uid=${uid}`);
-      const parsedData = await data.json();
-      
-      const spotInfo = spotData.data.spots.filter((spot) =>
-        parsedData.favorites.includes(spot._id)
-      );
-      setFavoritesSpotInfo(spotInfo)
-      console.log(spotInfo);
-      
-      
-    } catch (err) {
-      console.error('Error fetching favorites:', err);
-    }
-  };
+  const getRandomSpots=async()=>{
+    
+    const randomSpots = await spotData.data.spots.sort(() => Math.random() - 0.5).slice(0, 5);
+    
+    console.log(randomSpots);
+    setRandomSpots(randomSpots);
+    
+    
+    
+    
+  }
+  
 
+  
   const handleSlide = (distance: number) => {
     const slider = document.getElementById('slider');
     if (slider) {
@@ -61,11 +58,9 @@ function FavoritesList() {
     EPIC: 'text-fuchsia-800',
   };
   return (
-    login && (
+    !login && (
       <>
-        <div className=' font-bold text-3xl mt-4'>Favorites</div>
-        {favoritesSpotInfo.length>0?
-        <>
+        <div className=' font-bold text-3xl'>為你推薦</div>
         <div className="w-full h-[320px] relative">
           
           <div
@@ -78,12 +73,12 @@ function FavoritesList() {
             id="slider"
             className="w-full h-full whitespace-nowrap overflow-x-scroll no-scrollbar scroll-smooth"
           >
-            {favoritesSpotInfo.map((spot, idx) => {
+            {randomSpots.map((spot, idx) => {
               const waveRatingColor = colorClasses[spot.rating.key] || 'text-gray-500';
               return (
-                <Link key={idx} href={`/surf-report/${spot._id}`}>
                 <div
                   className=" w-[320px] h-[300px] mx-[5px] my-[10px] inline-block shadow-xl shadow-current rounded-3xl bg-slate-100"
+                  key={idx}
                 >
                   
                     <Image 
@@ -102,7 +97,6 @@ function FavoritesList() {
                     {spot.rating.key.replace(/_/g, ' ')}
                   </div>
                 </div>
-                </Link>
               );
             })}
           </div>
@@ -114,22 +108,10 @@ function FavoritesList() {
           </div>
         </div>
         <div className='text-3xl font-bold'>Forecast</div>
-        <SpotChart randomSpots={favoritesSpotInfo}/></>:
-        <div className='w-full h-[300px] flex flex-col justify-center items-center'>
-          <div className='font-orbitron font-bold text-xl flex items-center'>Welcome to<div className='ml-1 text-2xl text-blue-600'>WAVE TO GO!</div></div>
-          <div className='mt-2 font-bold'>Lets find some waves!</div>
-          <Link href='/surf-spot-map'>
-          <div className='mt-2 text-6xl'><AddCircleIcon fontSize="inherit"/></div>
-          </Link>
-        </div>
-        
-        }
-        
+        <SpotChart randomSpots={randomSpots}/>
       </>
     )
   );
 }
 
-export default FavoritesList;
-
-
+export default RandomList;

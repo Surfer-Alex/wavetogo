@@ -7,7 +7,8 @@ module.exports = {
   ],
   theme: {
     fontFamily: {
-      'nova-flat': '"Nova Flat"'
+      'orbitron':'Orbitron',
+      "bebas-neue":'Bebas Neue',
     },
     extend: {
       // backgroundImage: {
