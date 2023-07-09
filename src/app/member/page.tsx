@@ -22,7 +22,6 @@ function Page() {
 
   useEffect(() => {
     setUserData();
-    console.log(user);
   }, [user]);
 
   const getUserInfo = userPrivateStore((state) => state.userInfo);
@@ -41,7 +40,7 @@ function Page() {
           photoURL: photoURL,
           providerId: providerId,
         };
-        await setDoc(doc(db, 'users', uid), newUser);
+        await setDoc(doc(db, 'users', uid), newUser,{ merge: true });
         userStore.setState({ uid: uid,photoURL:photoURL||'' });
         userPrivateStore.setState({ userInfo: newUser });
         setIsUserLoggedIn(true);

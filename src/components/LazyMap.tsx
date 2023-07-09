@@ -15,6 +15,10 @@ import MarkerClusterGroup from '@changey/react-leaflet-markercluster';
 import '@changey/react-leaflet-markercluster/dist/styles.min.css';
 import { LatLng, Map as Mymap } from 'leaflet';
 import Link from 'next/link';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import { userStore } from '@/store';
+
 
 interface SpotInfo {
   lat: number;
@@ -31,7 +35,7 @@ interface SpotInfo {
   };
   rating: { key: string };
   bestSeason: string;
-  _id: number;
+  _id: string;
   difficulty: string[];
   region: string;
 }
@@ -138,17 +142,28 @@ const LazyMap = () => {
   const [bounds, setBounds] = useState<LatLngBounds | undefined>();
   const [selectedLevel, setSelectedLevel] = useState<string | undefined>('');
   const [selectedRegion, setSelectedRegion] = useState<string | undefined>('');
+  const [favorites, setFavorites] = useState<string[]>([])
 
   const markerRef = useRef<L.Marker[]>([]);
   const ZOOM_LEVEL = 8;
 
+  const uid = userStore((state)=>state.uid);
+  console.log(uid);
+
+
+
   useEffect(() => {
     getSpotData(setSpotInfo);
     // getSpotByServer(setSpotInfo);
+    fetchFavorites();
   }, []);
   useEffect(() => {
     setBounds(map?.getBounds());
   }, [map]);
+  useEffect(() => {
+    console.log(favorites);
+    
+  }, [favorites]);
 
   //定位功能
   function LocationMarker() {
@@ -221,6 +236,46 @@ const LazyMap = () => {
   const splitRegion = spotInfo?.flatMap((i) => i.region);
   const regions = Array.from(new Set(splitRegion));
 
+  const fetchFavorites=async()=>{
+    try{
+      const data = await fetch(`/api/firebase/favorites/?uid=${uid}`)
+      const parsedData = await data.json()
+      setFavorites(parsedData.favorites)
+      
+    }catch(err){
+      console.error('Error fetching favorites:', err);
+    }
+  }
+  
+  const handleAddToFavorites=async(event:React.MouseEvent,id:string)=>{
+    event.preventDefault();
+    try{
+      const data = await fetch(`/api/firebase/favorites/?uid=${uid}&id=${id}`,{method:"POST"})
+      const parsedData = await data.json()
+      console.log(parsedData);
+      if(favorites){
+        setFavorites((prevFavorites) => [...prevFavorites,id])
+      }else{
+        setFavorites([id])
+      }
+    }catch(err){
+      console.error('Error fetching favorites:', err);
+    }
+  }
+  const handleRemoveFromFavorites=async(event:React.MouseEvent,id:string)=>{
+    event.preventDefault();
+    try{
+      const data = await fetch(`/api/firebase/favorites/?uid=${uid}&id=${id}`,{method:"DELETE"})
+      const parsedData = await data.json()
+      console.log(parsedData);
+      
+      setFavorites((prevFavorites) =>prevFavorites.filter((fav) => fav !== id)
+    )
+     
+    }catch(err){
+      console.error('Error fetching favorites:', err);
+    }
+  }
   return (
     <>
       <div className="h-screen w-screen flex justify-end font-bold">
@@ -276,8 +331,11 @@ const LazyMap = () => {
           {filteredDiffcultyByLevel?.map((i, idx) => {
             return (
               <div className="bg-slate-300 h-[200px] w-1/2 border-2 px-4 rounded hover:shadow-lg transform hover:scale-105 hover:-translate-y-1  transition duration-200 hover:z-10" key={idx}>
+                
                 <Link href={`/surf-report/${i._id}`}>
-                  <div className="font-bold text-blue-700">{i.name}</div>
+                  <div className="font-bold text-blue-700">{i.name}
+                  {favorites?.some((fav)=>fav===i._id)?(<button className='text-2xl' onClick={(event)=>handleRemoveFromFavorites(event,i._id)}><FavoriteIcon fontSize="inherit"/></button>):(<button className='text-2xl' onClick={(event) => handleAddToFavorites(event,i._id)}><FavoriteBorderIcon fontSize="inherit"/></button>)}
+                  </div>
                   <div>{i.conditions.value}</div>
                   <div>最大浪高:{i.waveHeight.max} M</div>
                   <div>天氣狀況:{i.weather.condition}</div>

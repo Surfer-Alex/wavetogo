@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { devtools, persist, createJSONStorage } from 'zustand/middleware';
 import { UserInfo } from '@firebase/auth-types';
-interface Spot {
+export interface Spot {
   _id: string;
   weather: {
     condition: string;
@@ -36,6 +36,10 @@ interface Spot {
   };
   lat: number;
   lon: number;
+  name:string;
+  rating:{
+    key:string;
+  }
 }
 
 interface State {
