@@ -37,7 +37,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
           浪點回報區
         </div>
       </div>
-      <div className="w-[1000px] flex">
+      <div className="w-[1280px] flex">
         <div></div>
         <div></div>
       </div>

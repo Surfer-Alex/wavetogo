@@ -11,6 +11,10 @@ module.exports = {
       "bebas-neue":'Bebas Neue',
     },
     extend: {
+      width: {
+        '16%': '16%',
+        '32%':'32%',
+      },
       // backgroundImage: {
       //   'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
       //   'gradient-conic':
