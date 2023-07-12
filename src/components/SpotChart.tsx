@@ -173,8 +173,8 @@ const data = (data: InfoData): ChartData<'line'> => {
             chartArea: { top, bottom },
           } = context.chart;
           const gradient = ctx.createLinearGradient(0, top, 0, bottom);
-          gradient.addColorStop(0, 'rgba(0, 123, 255, 1)');
-          gradient.addColorStop(1, 'rgba(255, 255, 255, 1)');
+          gradient.addColorStop(0, '#0a9ddc');
+          gradient.addColorStop(1, '#ffffff');
           return gradient;
         },
         pointRadius: 0,
@@ -221,7 +221,16 @@ function SpotChart({ randomSpots }: SpotChartProps) {
   // console.log(conditionsData);
 
   if (chartData.length === 0 || conditionsData.length === 0) {
-    return <div className="flex justify-center">...Loading</div>;
+    return <div className='flex justify-center items-center h-[550px]'>
+    <div
+      className="inline-block h-14 w-14 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+      role="status"
+    >
+      <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+        Loading...
+      </span>
+    </div>
+    </div>;
   }
   // console.log(randomSpots)
   return (

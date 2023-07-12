@@ -1,5 +1,21 @@
 'use client';
 import React from 'react';
+import {db} from '@/firebase';
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  // addDoc,
+  // writeBatch,
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+} from 'firebase/firestore';
+
 async function setFireSpotByServer() {
   const data = await fetch('/api/firebase', { method: 'POST' });
   const formatedData = await data.json();
@@ -9,11 +25,27 @@ async function setFireSpotByServer() {
   }
 }
 
+async function addSub(){
+  const q = query(collection(db, "surfSpots"), where("id", "==", '640a7555606c45a93fbd4112'));
+const querySnapshot = await getDocs(q);
+console.log('haha');
+
+querySnapshot.forEach((i) => {
+  const docRef = doc(db, "surfSpots", i.id, "report", "custom id");
+setDoc(docRef, {
+  field1: 'value1',
+  field2: 'value2',
+});
+});
+}
+
+
 function Page(){
   // useEffect(() => {
   //   setFireSpotByServer();
   // }, []);
-  return <button onClick={setFireSpotByServer}>更新spot</button>;
+  return (<><button onClick={setFireSpotByServer}>更新spot</button>
+  <button  className='ml-4 hover:opacity-40' onClick={addSub}>加sub collection</button></>);
 }
 
 export default Page;

@@ -16,6 +16,7 @@ export interface Spot {
     value: string;
   };
   wind: {
+    gust: number;
     direction: number;
     directionType: string;
     speed: number;

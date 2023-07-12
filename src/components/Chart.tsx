@@ -179,22 +179,23 @@ export default function Chart({ id }: ChartProps) {
     }
   };
 
-  const waveChartData = {
+  const waveChartData: ChartData<'bar'>= {
     labels: waveInfo?.waveTimeData.map((i) => new Date(i * 1000)),
     datasets: [
-      {
+      { 
         label: '最大浪高',
-        data: waveInfo?.waveData,
+        data: waveInfo?.waveData||[],
         backgroundColor: 'rgba(0, 108, 250, 0.5)',
       },
     ],
   };
-  const windChartData = {
+  const windChartData: ChartData<'bar'> = {
     labels: windInfo?.windTimeData.map((i) => new Date(i * 1000)),
     datasets: [
       {
+        
         label: '風速',
-        data: windInfo?.windData,
+        data: windInfo?.windData||[],
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
       },
     ],
@@ -210,17 +211,21 @@ export default function Chart({ id }: ChartProps) {
       {
         label: '潮汐高度',
         data: tideInfo?.tideData ?? [],
-        backgroundColor: '#3d3d3d',
+        backgroundColor: '#000000',
         fill: true,
         segment: {
-          borderColor: (ctx) => up(ctx, '#a1cfff') || down(ctx, '#863031'),
-          backgroundColor: (ctx) => up(ctx, '#a1cfff') || down(ctx, '#863031'),
+          // borderColor: (ctx) => up(ctx, '#a1cfff') || down(ctx, '#863031'),
+          borderColor:'transparent',
+          backgroundColor: (ctx) => up(ctx, '#00ff155e') || down(ctx, '#135914'),
         },
       },
     ],
   };
   const options: ChartOptions<'bar'> = {
+    maintainAspectRatio:false,
+    
     scales: {
+      
       x: {
         type: 'time',
         time: {
@@ -228,10 +233,28 @@ export default function Chart({ id }: ChartProps) {
         },
         grid: {
           display: false,
+          tickLength: 0,
+        },
+        border: {
+          display: false,
+        },
+        ticks: {
+          
+          stepSize: 3,
+          callback: (value) => {
+            const date = new Date(value);
+            const hour = date.getHours();
+            
+            return hour;
+          }
         },
       },
       y: {
         beginAtZero: true,
+        grid: {
+          
+          tickLength: 0,
+        },suggestedMax: 2,
       },
       x2: {
         position: 'top',
@@ -242,7 +265,8 @@ export default function Chart({ id }: ChartProps) {
         },
         grid: {
           tickColor: 'black',
-          color: 'black',
+          // color: 'black',
+          tickLength: 0,
         },
         ticks: {
           source: 'labels',
@@ -252,12 +276,13 @@ export default function Chart({ id }: ChartProps) {
     responsive: true,
 
     plugins: {
+      
       legend: {
-        position: 'bottom' as const,
+        display: false,
       },
       title: {
         display: true,
-        // text: "Chart.js Bar Chart"
+        text: "Waves Forecast"
       },
       tooltip: {
         callbacks: {
@@ -294,18 +319,32 @@ export default function Chart({ id }: ChartProps) {
     },
   };
   const windOptions: ChartOptions<'bar'> = {
+    maintainAspectRatio:false,
     scales: {
       x: {
         type: 'time',
         time: {
           unit: 'hour',
         },
+        ticks: {
+          stepSize: 3,
+          callback: (value) => {
+            const date = new Date(value);
+            const hour = date.getHours();
+            return hour;
+          }
+        },
         grid: {
           display: false,
+          tickLength: 0,
         },
       },
       y: {
         beginAtZero: true,
+        grid: {
+          
+          tickLength: 0,
+        },
       },
       x2: {
         position: 'top',
@@ -316,11 +355,12 @@ export default function Chart({ id }: ChartProps) {
         },
         grid: {
           tickColor: 'black',
-
-          color: 'black',
+          // color: 'black',
+          tickLength: 0,
         },
         ticks: {
-          source: 'labels',
+          display:false,
+          // source: 'labels',
         },
       },
     },
@@ -328,11 +368,11 @@ export default function Chart({ id }: ChartProps) {
 
     plugins: {
       legend: {
-        position: 'bottom' as const,
+        display: false,
       },
       title: {
         display: true,
-        // text: "Chart.js Bar Chart"
+        text: "Winds Forecast"
       },
       tooltip: {
         callbacks: {
@@ -387,6 +427,8 @@ export default function Chart({ id }: ChartProps) {
     return dataset.data[closestIndex];
   }
   const tideOptions: ChartOptions<'line'> = {
+    maintainAspectRatio:false,
+    
     scales: {
       x: {
         type: 'time',
@@ -395,10 +437,22 @@ export default function Chart({ id }: ChartProps) {
         },
         grid: {
           display: false,
+          tickLength: 0,
+        },ticks: {
+          stepSize: 3,
+          callback: (value) => {
+            const date = new Date(value);
+            const hour = date.getHours();
+            return hour;
+          }
         },
       },
       y: {
         beginAtZero: true,
+        grid: {
+          
+          tickLength: 0,
+        },
       },
       x2: {
         position: 'top',
@@ -409,18 +463,23 @@ export default function Chart({ id }: ChartProps) {
         grid: {
           tickColor: 'black',
 
-          color: 'black',
+          // color: 'black',
         },
       },
     },
     responsive: true,
     plugins: {
+      tooltip: {
+        mode: 'index',
+        intersect: false,
+    },
       legend: {
-        position: 'top' as const,
+        display:false
+        // position: 'top' as const,
       },
       title: {
-        display: false,
-        text: 'Chart.js Line Chart',
+        display:true,
+        text: 'Tides Forecast',
       },
       annotation: {
         annotations: {
@@ -444,8 +503,8 @@ export default function Chart({ id }: ChartProps) {
   };
 
   return (
-    <>
-      <div className="h-[500px] w-full px-5 flex justify-center">
+    <div className='max-w-[1280px] w-full'>
+      <div className="h-[300px] w-full px-5 flex justify-center">
         <Bar
           options={options}
           data={waveChartData}
@@ -453,7 +512,7 @@ export default function Chart({ id }: ChartProps) {
           onMouseMove={hover1}
         />
       </div>
-      <div className="h-[500px] w-full px-5 flex justify-center">
+      <div className="h-[300px] w-full px-5 flex justify-center">
         <Bar
           options={windOptions}
           data={windChartData}
@@ -461,9 +520,9 @@ export default function Chart({ id }: ChartProps) {
           onMouseMove={hover2}
         />
       </div>
-      <div className="h-[500px] w-full px-5 flex justify-center">
+      <div className="h-[300px] w-full px-5 flex justify-center">
         <Line options={tideOptions} data={tidesData} />
       </div>
-    </>
+    </div>
   );
 }
