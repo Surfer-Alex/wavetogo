@@ -19,7 +19,7 @@ const CurrentSection = ({ id }: ChartProps) => {
   const spotInfo = spotData.data.spots
     .map((i) => i)
     .filter((i) => i._id === id);
-  console.log(spotInfo[0]);
+  
   const colorClasses: ColorClasses = {
     VERY_POOR: 'text-red-600',
     POOR: 'text-amber-600',
@@ -72,7 +72,7 @@ const CurrentSection = ({ id }: ChartProps) => {
                 <div className="ml-1 text-base self-end">M</div>
               </div>
 
-              <div className={`${waveRatingColor} text-2xl font-bold mt-1`}>
+              <div className={`${waveRatingColor} text-xl font-bold mt-2`}>
                 {spotInfo[0].conditions.value.replace(/_/g, ' ')}
               </div>
             </div>

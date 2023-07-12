@@ -1,5 +1,5 @@
 import './globals.css';
-import { Noto_Sans_TC } from 'next/font/google';
+import { Noto_Sans_TC,Bebas_Neue,Russo_One } from 'next/font/google';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import DataProvider from '@/components/DataProvider';
@@ -8,6 +8,14 @@ import React from 'react';
 const inter = Noto_Sans_TC({
   subsets: ['latin'],
   weight: ['100', '300', '400', '500', '700', '900'],
+});
+const outer = Bebas_Neue({
+  subsets: ['latin'],
+  weight: '400'
+});
+const tester = Russo_One({
+  subsets: ['latin'],
+  weight: '400'
 });
 
 export const metadata = {
@@ -22,11 +30,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={tester.className}>
+        
         <DataProvider />
         <Header />
         {children}
         <Footer />
+        
       </body>
     </html>
   );

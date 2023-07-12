@@ -2,7 +2,8 @@ import { headers } from 'next/headers';
 import Chart from '@/components/Chart';
 import CurrentSection from '@/components/CurrentSection';
 
-  
+
+import DetailPageReport from '@/components/DetailPageReport';
 
 const getSpotInfo=async(id:string)=>{
 const headersData = headers();
@@ -23,33 +24,46 @@ const host = headersData.get('host');
 
 export default async function Page({ params }: { params: { slug: string } }) {
   const spotInfo= await getSpotInfo(params.slug);
-  // const currentInfo=await getAllSpotInfo(params.slug);
-
+  
+  
 
   
   return (
-    <div className="w-full flex items-center flex-col">
-      <div className="w-full h-[250px] flex">
-        <div className="w-1/2 flex justify-center items-center bg-slate-500">
-        {spotInfo.name}:{params.slug}
-        </div>
-        <div className="w-1/2  flex justify-center items-center bg-orange-400">
-          浪點回報區
-        </div>
-      </div>
-      <div className="w-[1280px] flex">
-        <div></div>
-        <div></div>
-      </div>
+    <div className="w-full flex items-center flex-col bg-[#ffffff]"> 
+      <DetailPageReport id={params.slug}/>
+      
       <CurrentSection id={params.slug}/>
       <Chart id={params.slug} />
-      <div className="w-[1000px] flex flex-wrap">
-        <div className="w-1/2 h-[200px] text-center"><div className=' text-xl text-teal-500'>最佳季節</div>{spotInfo.bestSeason}</div>
-        <div className="w-1/2 h-[200px] text-center"><div className=' text-xl text-teal-500'>類型</div>{spotInfo.category.map((i:string)=>i).join("、")}</div>
-        <div className="w-1/2 h-[200px] text-center"><div className=' text-xl text-teal-500'>面向</div>{spotInfo.direction}</div>
-        <div className="w-1/2 h-[200px] text-center"><div className=' text-xl text-teal-500'>等級</div>{spotInfo.difficulty}</div>
-        <div className="w-1/2 h-[200px] text-center"><div className=' text-xl text-teal-500'>地形</div>{spotInfo.bottom}</div>
-        <div className="w-1/2 h-[200px] text-center"><div className=' text-xl text-teal-500'>方向</div>{spotInfo.surfWay}</div>
+      <div className="max-w-[1280px] w-full text-3xl font-bold text-stone-950 mt-5">
+          <div className="self-center">Spot Info</div>
+        </div>
+      <div className="max-w-[1000px] w-full flex flex-wrap mt-5 mb-5 justify-center">
+      
+        <div className="mx-4 my-4 w-1/4 h-[150px] shadow-[0px_10px_1px_rgba(221,_221,_221,_1),_0_10px_20px_rgba(204,_204,_204,_1)] rounded-3xl bg-slate-100 text-center">
+          <div className=' font-bold text-2xl text-slate-700 h-1/5 mt-3'>Best Season</div>
+          <div className='font-base text-xl text-slate-700 h-4/5 flex justify-center items-center'>{spotInfo.bestSeason}</div>
+        </div>
+        <div className="mx-4 my-4 w-1/4 h-[150px] shadow-[0px_10px_1px_rgba(221,_221,_221,_1),_0_10px_20px_rgba(204,_204,_204,_1)] rounded-3xl bg-slate-100 text-center">
+          <div className=' font-bold text-2xl text-slate-700 h-1/5 mt-3'>Category</div>
+          <div className='font-base text-xl text-slate-700 h-4/5 flex justify-center items-center'>{spotInfo.category.map((i:string)=>i).join("、")}</div>
+        </div>
+        <div className="mx-4 my-4 w-1/4 h-[150px] shadow-[0px_10px_1px_rgba(221,_221,_221,_1),_0_10px_20px_rgba(204,_204,_204,_1)] rounded-3xl bg-slate-100 text-center">
+          <div className=' font-bold text-2xl text-slate-700 h-1/5 mt-3'>Direction</div>
+          <div className='font-base text-xl text-slate-700 h-4/5 flex justify-center items-center'>{spotInfo.direction}</div>
+        </div>
+        <div className="mx-4 my-4 w-1/4 h-[150px] shadow-[0px_10px_1px_rgba(221,_221,_221,_1),_0_10px_20px_rgba(204,_204,_204,_1)] rounded-3xl bg-slate-100 text-center">
+          <div className=' font-bold text-2xl text-slate-700 h-1/5 mt-3'>Level</div>
+          <div className='font-base text-xl text-slate-700 h-4/5 flex justify-center items-center'>{spotInfo.difficulty}</div>
+        </div>
+        <div className="mx-4 my-4 w-1/4 h-[150px] shadow-[0px_10px_1px_rgba(221,_221,_221,_1),_0_10px_20px_rgba(204,_204,_204,_1)] rounded-3xl bg-slate-100 text-center">
+          <div className=' font-bold text-2xl text-slate-700 h-1/5 mt-3'>Bottom</div>
+          <div className='font-base text-xl text-slate-700 h-4/5 flex justify-center items-center'>{spotInfo.bottom}</div>
+        </div>
+        <div className="mx-4 my-4 w-1/4 h-[150px] shadow-[0px_10px_1px_rgba(221,_221,_221,_1),_0_10px_20px_rgba(204,_204,_204,_1)] rounded-3xl bg-slate-100 text-center">
+          <div className=' font-bold text-2xl text-slate-700 h-1/5 mt-3'>Left or Right</div>
+          <div className='font-base text-xl text-slate-700 h-4/5 flex justify-center items-center'>{spotInfo.surfWay}</div>
+        </div>
+        
       </div>
     </div>
   );

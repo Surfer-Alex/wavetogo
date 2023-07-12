@@ -7,14 +7,22 @@ module.exports = {
   ],
   theme: {
     fontFamily: {
-      'orbitron':'Orbitron',
-      "bebas-neue":'Bebas Neue',
+      'orbitron':'"Orbitron"',
+      'bebas-neue':'"Bebas Neue"',
+      'permanent-marker':'"Permanent Marker"',
     },
     extend: {
       width: {
         '16%': '16%',
         '32%':'32%',
+        '45%':'45%',
       },
+      // backgroundImage: (theme) => ({
+      //   waves: "url('https://source.unsplash.com/ChOHCv42flI')",
+      // }),
+      height:{
+        'negativeHeader':'calc(100vh - 80px)',
+      }
       // backgroundImage: {
       //   'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
       //   'gradient-conic':

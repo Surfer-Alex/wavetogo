@@ -60,16 +60,17 @@ function FavoritesList() {
     GOOD: 'text-blue-600',
     EPIC: 'text-fuchsia-800',
   };
+  
   return (
     login && (
       <>
         <div className=' font-bold text-3xl mt-4'>Favorites</div>
         {favoritesSpotInfo.length>0?
         <>
-        <div className="w-full h-[320px] relative">
+        <div className="w-full relative">
           
           <div
-            className="absolute -left-7 top-1/2 rounded-full flex items-center opacity-40 -translate-y-1/2 text-6xl shadow shadow-current bg-gray-100 hover:opacity-100"
+            className="absolute -left-7 top-1/2 rounded-full flex items-center opacity-40 -translate-y-1/2 text-6xl shadow-[4.0px_8.0px_8.0px_rgba(0,0,0,0.38)] bg-gray-100 hover:opacity-100"
             onClick={handleSlideLeft}
           >
             <ArrowLeftOutlinedIcon className="" fontSize="inherit" />
@@ -80,10 +81,11 @@ function FavoritesList() {
           >
             {favoritesSpotInfo.map((spot, idx) => {
               const waveRatingColor = colorClasses[spot.rating.key] || 'text-gray-500';
+              
               return (
                 <Link key={idx} href={`/surf-report/${spot._id}`}>
                 <div
-                  className=" w-[320px] h-[300px] mx-[5px] my-[10px] inline-block shadow-xl shadow-current rounded-3xl bg-slate-100"
+                  className=" w-[320px] h-[300px]  inline-block mx-4 my-4 shadow-[4.0px_8.0px_8.0px_rgba(0,0,0,0.38)] rounded-3xl bg-slate-100"
                 >
                   
                     <Image 
@@ -107,7 +109,7 @@ function FavoritesList() {
             })}
           </div>
           <div
-            className="absolute -right-7 top-1/2 rounded-full flex items-center opacity-40 -translate-y-1/2 text-6xl shadow shadow-current bg-gray-100 hover:opacity-100"
+            className="absolute -right-7 top-1/2 rounded-full flex items-center opacity-40 -translate-y-1/2 text-6xl shadow-[4.0px_8.0px_8.0px_rgba(0,0,0,0.38)] bg-gray-100 hover:opacity-100"
             onClick={handleSlideRight}
           >
             <ArrowRightOutlinedIcon className="" fontSize="inherit" />
@@ -116,8 +118,8 @@ function FavoritesList() {
         <div className='text-3xl font-bold'>Forecast</div>
         <SpotChart randomSpots={favoritesSpotInfo}/></>:
         <div className='w-full h-[300px] flex flex-col justify-center items-center'>
-          <div className='font-orbitron font-bold text-xl flex items-center'>Welcome to<div className='ml-1 text-2xl text-blue-600'>WAVE TO GO!</div></div>
-          <div className='mt-2 font-bold'>Lets find some waves!</div>
+          <div className=' font-bold text-3xl flex items-center'>Welcome to<div className='ml-1 text-2xl text-blue-600'>WAVE TO GO!</div></div>
+          <div className='mt-2 font-base text-2xl'>Lets find some waves!</div>
           <Link href='/surf-spot-map'>
           <div className='mt-2 text-6xl'><AddCircleIcon fontSize="inherit"/></div>
           </Link>
