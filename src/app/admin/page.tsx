@@ -1,6 +1,7 @@
 'use client';
-import React from 'react';
+import {useEffect} from 'react';
 import {db} from '@/firebase';
+import { useCollection } from 'react-firebase-hooks/firestore';
 import {
   collection,
   getDocs,
@@ -14,6 +15,7 @@ import {
   updateDoc,
   arrayUnion,
   arrayRemove,
+  onSnapshot
 } from 'firebase/firestore';
 
 async function setFireSpotByServer() {
@@ -27,8 +29,8 @@ async function setFireSpotByServer() {
 
 async function addSub(){
   const q = query(collection(db, "surfSpots"), where("id", "==", '640a7555606c45a93fbd4112'));
-const querySnapshot = await getDocs(q);
-console.log('haha');
+  const querySnapshot = await getDocs(q);
+
 
 querySnapshot.forEach((i) => {
   const docRef = doc(db, "surfSpots", i.id, "report", "custom id");
@@ -39,13 +41,41 @@ setDoc(docRef, {
 });
 }
 
+async function getSub(){
+  const q = query(collection(db, "surfSpots"), where("id", "==", '640a7555606c45a93fbd4112'));
+  
+  const querySnapshot = await getDocs(q);
+  const docId = querySnapshot.docs[0].id;
+  
+  
+  
+  const ref = collection(db, `surfSpots/${docId}/report`);
+
+  const unsub = onSnapshot(ref, (doc) => {
+    doc.forEach(doc=>{console.log(doc.data())});
+  });
+  
+  
+  
+  // 然后您可以处理 reportsData 中的数据
+ 
+
+}
 
 function Page(){
-  // useEffect(() => {
-  //   setFireSpotByServer();
-  // }, []);
+  useEffect(() => {
+    // setFireSpotByServer();
+    getSub();
+  }, []);
+  
+  
+  
+  
+  
   return (<><button onClick={setFireSpotByServer}>更新spot</button>
-  <button  className='ml-4 hover:opacity-40' onClick={addSub}>加sub collection</button></>);
+  <button  className='ml-4 hover:opacity-40' onClick={addSub}>加sub collection</button>
+  
+  </>);
 }
 
 export default Page;
