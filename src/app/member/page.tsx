@@ -1,13 +1,15 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useSignInWithGoogle } from 'react-firebase-hooks/auth';
+import { useSignInWithGoogle, useAuthState } from 'react-firebase-hooks/auth';
 import { signOut } from 'firebase/auth';
 import { db, auth } from '@/firebase';
 import { setDoc, doc, getDoc } from 'firebase/firestore';
 import { userStore, userPrivateStore } from '@/store';
 import { UserInfo } from '@firebase/auth-types';
 import Image from 'next/image';
-import userIcon from '../../../public/images/icons8-user.gif' 
+import userIcon from '../../../public/images/icons8-user.gif';
+import SignUp from '@/components/member/SignUp';
+import SignInWithNative from '@/components/member/SignInWithNative';
 
 function Page() {
   const [signInWithGoogle, user, loading, fbError] = useSignInWithGoogle(auth);
@@ -15,6 +17,9 @@ function Page() {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState<boolean | string>(false);
   const isLogin = userStore.getState().uid;
 
+  const [nativeUser] = useAuthState(auth);
+  
+  const [change, setChange] = useState(true);
   useEffect(() => {
     setIsUserLoggedIn(isLogin);
     getUserData(isLogin);
@@ -23,6 +28,12 @@ function Page() {
   useEffect(() => {
     setUserData();
   }, [user]);
+  useEffect(() => {
+    console.log(nativeUser);
+  }, [nativeUser]);
+  useEffect(() => {
+    console.log(change);
+  }, [change]);
 
   const getUserInfo = userPrivateStore((state) => state.userInfo);
   // console.log(getUserInfo);
@@ -32,7 +43,7 @@ function Page() {
       if (user) {
         const { uid, email, displayName, phoneNumber, photoURL, providerId } =
           user.user.providerData[0];
-        const newUser:UserInfo = {
+        const newUser: UserInfo = {
           uid: uid,
           email: email,
           displayName: displayName,
@@ -40,8 +51,8 @@ function Page() {
           photoURL: photoURL,
           providerId: providerId,
         };
-        await setDoc(doc(db, 'users', uid), newUser,{ merge: true });
-        userStore.setState({ uid: uid,photoURL:photoURL||'' });
+        await setDoc(doc(db, 'users', uid), newUser, { merge: true });
+        userStore.setState({ uid: uid, photoURL: photoURL || '' });
         userPrivateStore.setState({ userInfo: newUser });
         setIsUserLoggedIn(true);
       }
@@ -64,37 +75,69 @@ function Page() {
 
   async function Logout() {
     await signOut(auth);
-    userStore.setState({ uid: '',photoURL:''});
+    userStore.setState({ uid: '', photoURL: '' });
     userPrivateStore.setState({ userInfo: null });
     setIsUserLoggedIn(false);
   }
 
   return (
-    <div className="w-full flex justify-center">
-      <div className="max-w-[1280px] w-full flex">
-        {!isUserLoggedIn && (
-          <div className='flex justify-center'>
-          <button onClick={() => signInWithGoogle()}>
-            Continue with Google
-          </button>
+    <>
+      {!isUserLoggedIn && (
+        <div className="w-full flex">
+          <div className="w-1/2 flex flex-col items-center justify-center">
+            <div className="w-3/5">
+              <div className="text-8xl font-black text-center">Hi Surfer!</div>
+              {change ?(
+                <>
+                  <button onClick={() => signInWithGoogle()}>
+                    Continue with Google
+                  </button>
+                  <SignInWithNative />
+                  <button
+                    onClick={() => setChange((prev)=>!prev)}
+                    className=" mt-4"
+                  >
+                    Sign up
+                  </button>
+                </>
+              ):(
+                <>
+                  <SignUp />
+                  <button
+                    onClick={() => setChange((prev)=>!prev)}
+                    className="mt-4"
+                  >
+                    already have account?
+                  </button>
+                </>
+              )}
+            </div>
           </div>
-        )}
-        {isUserLoggedIn && (
-          <div className="w-1/4 flex flex-col">
-            <button className="h-[100px]">個人資訊</button>
-            <button className="h-[100px]">收藏浪點</button>
-            <button className="h-[100px]">已回報浪況</button>
+          <div className="w-1/2 relative h-negativeHeaderFooter">
+            <Image
+              src={'https://source.unsplash.com/ChOHCv42flI'}
+              alt="signIn campaign"
+              fill
+              quality={100}
+            />
           </div>
-        )}
-        
-          {isUserLoggedIn && (
+        </div>
+      )}
+      {isUserLoggedIn && (
+        <div className="w-full flex justify-center">
+          <div className="max-w-[1280px] w-full flex">
+            <div className="w-1/4 flex flex-col">
+              <button className="h-[100px]">個人資訊</button>
+              <button className="h-[100px]">收藏浪點</button>
+              <button className="h-[100px]">已回報浪況</button>
+            </div>
             <div className="w-3/4 flex flex-col items-center">
               <Image
                 width={100}
                 height={100}
                 alt="user icon"
                 src={getUserInfo?.photoURL || userIcon}
-                className='rounded-full'
+                className="rounded-full"
               />
               <div>{getUserInfo?.displayName}</div>
               <div>{getUserInfo?.email}</div>
@@ -102,10 +145,13 @@ function Page() {
                 Sign out
               </button>
             </div>
-          )}
-        
-      </div>
-    </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 export default Page;
+{
+  /* <button onClick={()=>{signOut(auth)}}>logout</button> */
+}

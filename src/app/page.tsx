@@ -20,7 +20,7 @@ export default async function Home() {
         
         
          
-        <div className='w-full flex flex-col'>
+        <div className='w-full flex flex-col mb-6'>
           <RandomList/>
           <FavoritesList/>
         </div>  

@@ -22,6 +22,7 @@ module.exports = {
       // }),
       height:{
         'negativeHeader':'calc(100vh - 80px)',
+        'negativeHeaderFooter':'calc(100vh - 160px)',
       }
       // backgroundImage: {
       //   'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

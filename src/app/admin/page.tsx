@@ -33,7 +33,7 @@ async function addSub(){
 
 
 querySnapshot.forEach((i) => {
-  const docRef = doc(db, "surfSpots", i.id, "report", "custom id");
+  const docRef = doc(db, "surfSpots", i.id, "reports", "custom id");
 setDoc(docRef, {
   field1: 'value1',
   field2: 'value2',
@@ -49,23 +49,17 @@ async function getSub(){
   
   
   
-  const ref = collection(db, `surfSpots/${docId}/report`);
+  const ref = collection(db, `surfSpots/${docId}/reports`);
 
   const unsub = onSnapshot(ref, (doc) => {
     doc.forEach(doc=>{console.log(doc.data())});
   });
-  
-  
-  
-  // 然后您可以处理 reportsData 中的数据
- 
-
 }
 
 function Page(){
   useEffect(() => {
     // setFireSpotByServer();
-    getSub();
+    // getSub();
   }, []);
   
   
