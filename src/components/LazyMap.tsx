@@ -17,7 +17,7 @@ import { LatLng, Map as Mymap } from 'leaflet';
 import Link from 'next/link';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import { userStore } from '@/store';
+import { userPrivateStore } from '@/store';
 import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -150,9 +150,7 @@ const LazyMap = () => {
 
   const markerRef = useRef<L.Marker[]>([]);
   const ZOOM_LEVEL = 8;
-
-  const uid = userStore((state) => state.uid);
-  console.log(uid);
+  const uid = userPrivateStore.getState().userInfo?.uid;
 
   useEffect(() => {
     getSpotData(setSpotInfo);
@@ -369,10 +367,9 @@ const LazyMap = () => {
                   colorClasses[i.rating.key] || 'text-gray-500';
                 return (
                   <motion.div
-                  
-                  animate={{opacity:1}}
-                  initial={{opacity:0}}
-                  exit={{opacity:0}}
+                    animate={{ opacity: 1 }}
+                    initial={{ opacity: 0 }}
+                    exit={{ opacity: 0 }}
                     className=" bg-[#fafafa] h-[280px] w-45% my-4 mx-4 shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,_rgba(0,0,0,0.3)_0px_3px_7px_-3px]  rounded-2xl hover:shadow-[5px_5px_0px_0px_rgba(243,203,172)] transform hover:scale-105 hover:-translate-y-1  transition duration-200 hover:z-10 relative"
                     key={idx}
                   >

@@ -37,10 +37,10 @@ export interface Spot {
   };
   lat: number;
   lon: number;
-  name:string;
-  rating:{
-    key:string;
-  }
+  name: string;
+  rating: {
+    key: string;
+  };
 }
 
 interface State {
@@ -73,22 +73,20 @@ export const useStore = create<State>((set) => ({
   },
 }));
 
-export const userStore = create(
-  devtools(
-    persist(
-      () => ({
-        uid: '',
-        photoURL:'',
-      }),
-      {
-        name: 'user-auth', // name of the item in the storage (must be unique)
-        storage: createJSONStorage(() => localStorage), // (optional) by default, 'localStorage' is used
-      }
-    )
-  )
-);
-
-
+// export const userStore = create(
+//   devtools(
+//     persist(
+//       () => ({
+//         uid: '',
+//         photoURL:'',
+//       }),
+//       {
+//         name: 'user-auth', // name of the item in the storage (must be unique)
+//         storage: createJSONStorage(() => localStorage), // (optional) by default, 'localStorage' is used
+//       }
+//     )
+//   )
+// );
 
 export const userPrivateStore = create<UserPrivateState>(() => ({
   userInfo: null,

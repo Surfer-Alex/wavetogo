@@ -1,9 +1,11 @@
+"use client";
 import './globals.css';
 import { Noto_Sans_TC,Bebas_Neue,Russo_One } from 'next/font/google';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import DataProvider from '@/components/DataProvider';
 import React from 'react';
+import { SnackbarProvider } from 'notistack';
 
 const inter = Noto_Sans_TC({
   subsets: ['latin'],
@@ -31,12 +33,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={tester.className}>
-        
+      <SnackbarProvider maxSnack={2}> 
         <DataProvider />
         <Header />
         {children}
         <Footer />
-        
+      </SnackbarProvider>
       </body>
     </html>
   );

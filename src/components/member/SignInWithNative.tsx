@@ -1,18 +1,24 @@
 import { useState } from 'react';
 import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { db, auth } from '@/firebase';
-
-const SignInWithNative = () => {
+import { VariantType, useSnackbar } from 'notistack';
+type Props = {
+    setIsUserLoggedIn: (value: boolean) => void;
+  };
+const SignInWithNative = ({ setIsUserLoggedIn }: Props) => {
   const [signInForm, setSignInForm] = useState({
     email: '',
     password: '',
   });
   const [signInWithEmailAndPassword, user, loading, fbError] =
     useSignInWithEmailAndPassword(auth);
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const { enqueueSnackbar } = useSnackbar();
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>,variant: VariantType) => {
     e.preventDefault();
 
     signInWithEmailAndPassword(signInForm.email, signInForm.password);
+    setIsUserLoggedIn(true);
+    enqueueSnackbar('Login successfully !', { variant });
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,7 +28,7 @@ const SignInWithNative = () => {
     }));
   };
   return (
-    <form onSubmit={handleSubmit} className='flex flex-col mt-4 w-full'>
+    <form onSubmit={(e)=>handleSubmit(e,'success')} className='flex flex-col mt-4 w-full'>
       <input
         required
         name="email"
