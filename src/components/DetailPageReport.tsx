@@ -9,7 +9,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
 import { DateTimePicker } from '@mui/x-date-pickers';
 import { db } from '@/firebase';
-import { redirect } from 'next/navigation';
+import { DateTime } from 'luxon';
+
 import {
   collection,
   getDocs,
@@ -41,14 +42,16 @@ interface Report {
   content: string;
   userPhoto: string;
   uid: string;
+  displayName: string;
 }
 
 function DetailPageReport({ id }: ChartProps) {
   const [isLogin, setIsLogin] = useState(false);
   const [open, setOpen] = useState(false);
   const [selectedDateTime, setSelectedDateTime] = useState<Date | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
+  const [message, setMessage] = useState<string>('');
   const [reports, setReports] = useState<Report[]>([]);
+  const [dateTimeError, setDateTimeError] = useState<string>('');
 
   // console.log(message);
 
@@ -75,6 +78,12 @@ function DetailPageReport({ id }: ChartProps) {
 
   async function addReport(e: React.FormEvent) {
     e.preventDefault();
+    if (selectedDateTime === null) {
+      setDateTimeError('DateTimePicker Required!');
+      return;
+    } else {
+      setDateTimeError('');
+    }
 
     const querySnapshot = await getDocs(q);
 
@@ -86,8 +95,13 @@ function DetailPageReport({ id }: ChartProps) {
         content: message,
         userPhoto: getUserInfo?.photoURL,
         uid: getUserInfo?.uid,
+        displayName: getUserInfo?.displayName,
       });
     });
+
+    setSelectedDateTime(null);
+    setMessage('');
+    setOpen(false);
   }
 
   async function getSub() {
@@ -110,19 +124,31 @@ function DetailPageReport({ id }: ChartProps) {
     .filter((i) => i._id === id);
 
   if (spotInfo.length === 0) {
-    return <div>...Loading</div>;
+    return (
+      <div className="w-screen h-negativeHeader flex justify-center items-center">
+        <div
+          className="inline-block h-14 w-14 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+          role="status"
+        >
+          <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+            Loading...
+          </span>
+        </div>
+      </div>
+    );
   }
+
   return (
     <div className="w-full h-[400px] flex ">
       <div className="w-1/2 h-full relative">
         <Image
           priority={true}
-          width={500}
-          height={500}
+          width={1200}
+          height={600}
           quality={100}
           className="w-full h-full"
           alt="spot static map with marker"
-          src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v11/static/pin-l+f44546(${spotInfo[0].lon},${spotInfo[0].lat})/${spotInfo[0].lon},${spotInfo[0].lat},15,0/1000x500?access_token=${process.env.NEXT_PUBLIC_MAPBOX_API_KEY}&logo=false`}
+          src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v11/static/pin-l+f44546(${spotInfo[0].lon},${spotInfo[0].lat})/${spotInfo[0].lon},${spotInfo[0].lat},15,0/1200x600?access_token=${process.env.NEXT_PUBLIC_MAPBOX_API_KEY}&logo=false`}
         />
         <div className="w-full h-full absolute top-0 left-0 flex justify-center items-center font-black text-6xl text-white opacity-70 ">
           {spotInfo[0].name}
@@ -136,7 +162,7 @@ function DetailPageReport({ id }: ChartProps) {
           </div>
           <div className="ml-1 flex items-center">WAVE REPORT</div>
         </div>
-        <div className="w-full h-[290px] px-12 font-bold overflow-auto ">
+        <div className="w-full h-[280px] px-12 font-bold overflow-auto ">
           {reports && reports.length > 0 ? (
             reports.map((i, idx) => {
               return (
@@ -151,8 +177,10 @@ function DetailPageReport({ id }: ChartProps) {
                         alt={'userPhoto'}
                         width={30}
                         height={30}
+                        quality={100}
+                        className="rounded-full"
                       />
-                      <div className="ml-2">{i.uid}</div>
+                      <div className="ml-2">{i.displayName}</div>
                     </div>
                     <div className="ml-auto w-5/6 text-base font-normal flex items-center">
                       {i.content}
@@ -181,7 +209,7 @@ function DetailPageReport({ id }: ChartProps) {
         <div className="text-2xl h-[54px] font-bold flex items-center justify-center">
           <button
             onClick={() => setOpen(true)}
-            className=" rounded-2xl bg-black text-white px-2 py-1"
+            className="text-lg rounded-xl border border-gray-700 text-gray-700 px-2 py-2 opacity-60 hover:opacity-100"
           >
             Report conditions
           </button>
@@ -193,7 +221,7 @@ function DetailPageReport({ id }: ChartProps) {
           >
             <div
               onClick={(e) => e.stopPropagation()}
-              className={`w-1/3 h-2/3 bg-white  text-black relative`}
+              className={`w-1/3 h-2/3 bg-white  text-black relative rounded-xl`}
             >
               {isLogin ? (
                 <div className="h-full">
@@ -201,27 +229,37 @@ function DetailPageReport({ id }: ChartProps) {
                     WAVE CONDITIONS REPORT
                   </div>
 
-                  <div className="w-full flex flex-col mt-4 px-4">
-                    <form onSubmit={(e) => addReport(e)}>
+                  <div className=" mt-4 px-4">
+                    <form
+                      onSubmit={(e) => addReport(e)}
+                      className="w-full flex flex-col"
+                    >
                       <LocalizationProvider dateAdapter={AdapterLuxon}>
                         <DateTimePicker
                           label="Condition Report Time"
+                          // defaultValue={DateTime.local()}
                           value={selectedDateTime}
                           onChange={(newValue) => setSelectedDateTime(newValue)}
+                          // maxDate={new Date('2020-08-18')}
                         />
+                        <span className="text-xs text-red-700 ml-2">
+                          {dateTimeError}
+                        </span>
 
                         <label
                           htmlFor="message"
                           className="block mb-2 text-xl font-medium text-gray-900 dark:text-white mt-4"
                         >
-                          report content
+                          Report content
                         </label>
                         <textarea
                           id="message"
                           rows={8}
                           className=" block p-2.5 w-full text-xl text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                           placeholder="Write your thoughts here..."
+                          value={message}
                           onChange={(e) => setMessage(e.target.value)}
+                          required
                         ></textarea>
                       </LocalizationProvider>
                       <div className="flex h-full items-center justify-center">

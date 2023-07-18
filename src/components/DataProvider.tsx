@@ -15,13 +15,16 @@ const DataProvider = () => {
   useEffect(() => {
     getCurrentInfo('/api/currentAllSpot');
   }, []);
+  useEffect(() => {
+    console.log('data提供', user);
+  }, [user]);
 
   const setUserData = async () => {
     try {
       if (user) {
         const { uid, email, displayName, phoneNumber, photoURL, providerId } =
           user.providerData[0];
-        console.log(displayName);
+        // console.log(displayName);
         const newUser: UserInfo = {
           uid: uid,
           email: email,

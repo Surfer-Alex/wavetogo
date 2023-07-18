@@ -15,8 +15,7 @@ import {
 import { Line } from 'react-chartjs-2';
 
 interface SpotChartProps {
-  randomSpots: { _id: string;
-  name:string }[];
+  randomSpots: { _id: string; name: string }[];
 }
 ChartJS.register(
   CategoryScale,
@@ -83,15 +82,15 @@ const conditionLabel = (waveHeight: WaveHeight): Plugin => {
             dailyWaveHeights[dayIndex].max === 0
               ? 'FLAT'
               : `${dailyWaveHeights[dayIndex].min}-${dailyWaveHeights[dayIndex].max}m`;
-          ctx.font = 'bold 12px sans-serif';
+          ctx.font = 'bold 20px sans-serif';
 
           ctx.beginPath();
           ctx.fillStyle = 'rgba(0,0,0,0.8)';
           ctx.roundRect(
-            x.getPixelForValue(index + 3.5) - 30,
-            top + height / 2 - 20,
-            60,
-            20,
+            x.getPixelForValue(index + 3.5) - 50,
+            top + height / 2 - 27,
+            100,
+            30,
             20
           );
           ctx.fill();
@@ -174,7 +173,7 @@ const data = (data: InfoData): ChartData<'line'> => {
           } = context.chart;
           const gradient = ctx.createLinearGradient(0, top, 0, bottom);
           gradient.addColorStop(0, '#0a9ddc');
-          gradient.addColorStop(1, '#ffffff');
+          gradient.addColorStop(1, 'rgb(241 245 249)');
           return gradient;
         },
         pointRadius: 0,
@@ -214,33 +213,42 @@ function SpotChart({ randomSpots }: SpotChartProps) {
     );
     setConditionsData(conditionsData);
   };
-  
+
   const labels = chartData[0]?.data.wave
     .filter((_, index) => index % 24 === 0)
     .map((i) => i.timestamp);
   // console.log(conditionsData);
 
   if (chartData.length === 0 || conditionsData.length === 0) {
-    return <div className='flex justify-center items-center h-[550px]'>
-    <div
-      className="inline-block h-14 w-14 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-      role="status"
-    >
-      <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
-        Loading...
-      </span>
-    </div>
-    </div>;
+    return (
+      <div className="flex justify-center items-center h-[550px]">
+        <div
+          className="inline-block h-14 w-14 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+          role="status"
+        >
+          <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+            Loading...
+          </span>
+        </div>
+      </div>
+    );
   }
   // console.log(randomSpots)
   return (
     <div className="flex justify-center mt-6">
-      <div className="max-w-[1280px] w-full  flex">
-        <div className='w-1/5 flex flex-col'>
-          <div className="w-full h-[50px] flex items-center justify-center text-2xl font-bold">SPOT</div>
-          {randomSpots.map((i,idx)=><div key={idx} className="w-full h-[100px] flex items-center justify-center text-2xl font-bold text-stone-700">{i.name}</div>)}
+      <div className=" w-full  flex">
+        <div className="w-1/5 flex flex-col ">
+          <div className="w-full h-[50px] flex items-center justify-center text-2xl font-bold"></div>
+          {randomSpots.map((i, idx) => (
+            <div
+              key={idx}
+              className="px-6 mt-4 w-full h-[100px] flex items-center rounded-l-2xl text-xl font-bold bg-slate-100 text-black"
+            >
+              {i.name}
+            </div>
+          ))}
         </div>
-        <div className='w-4/5 flex flex-col'>
+        <div className="w-4/5 flex flex-col">
           <div className="w-full h-[50px] flex ">
             {labels.map((timestamp, idx) => {
               const date = new Date(timestamp * 1000);
@@ -260,38 +268,24 @@ function SpotChart({ randomSpots }: SpotChartProps) {
                   key={idx}
                   className="w-1/5 flex flex-col justify-center text-center font-bold"
                 >
-                  <div>{formattedDate}</div>
-                  <div>{dayOfWeek}</div>
+                  <div className=" text-lg">{formattedDate}</div>
+                  <div className="text-slate-400">{dayOfWeek}</div>
                 </div>
               );
             })}
           </div>
-          {chartData.map((_,idx)=>{
-            return(
-              <div key={idx} className="w-full h-[100px]">
-              <Line
-                plugins={[conditionLabel(conditionsData[idx])]}
-                options={options}
-                data={data(chartData[idx])}
-              />
-            </div>)
+          {chartData.map((_, idx) => {
+            return (
+              <div key={idx} className="mt-4 w-full h-[100px] bg-slate-100">
+                <Line
+                  plugins={[conditionLabel(conditionsData[idx])]}
+                  options={options}
+                  data={data(chartData[idx])}
+                />
+              </div>
+            );
           })}
-          {/* <div className="w-full h-[100px]">
-            <Line
-              plugins={[conditionLabel(conditionsData[0])]}
-              options={options}
-              data={data(chartData[0])}
-            />
-          </div> */}
-          {/* <div className="w-full h-[100px]">
-            <Line
-              plugins={[conditionLabel(conditionsData[1])]}
-              options={options}
-              data={data(chartData[1])}
-            />
-          </div> */}
         </div>
-        
       </div>
     </div>
   );

@@ -20,7 +20,8 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { userPrivateStore } from '@/store';
 import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
-
+import useProgressBar from '@/hooks/useProgressBar';
+import CardSkeleton from './CardSkeleton';
 interface SpotInfo {
   lat: number;
   lon: number;
@@ -71,23 +72,28 @@ async function getRegion(lat: number, lon: number) {
       cache: 'force-cache',
     });
     const data = await response.json();
-    const results = data.results;
-    //這裡超複雜，因為google api資料排序問題，找不到規則，要一直切資料
-    const filteredRegionString = await data.results[results.length - 3]
-      .formatted_address;
-    const taiwanIndex = filteredRegionString.indexOf('台灣');
-    const extractedString = filteredRegionString.slice(
-      taiwanIndex + 2,
-      taiwanIndex + 5
-    );
+    // console.log(data.features[0].text_en);
 
-    return extractedString;
+    // const results = data.results;
+    // //中文版配google geocoding api這裡超複雜，因為google api資料排序問題，找不到規則，要一直切資料
+    // const filteredRegionString = await data.results[results.length - 3]
+    //   .formatted_address;
+    // const taiwanIndex = filteredRegionString.indexOf('台灣');
+    // const extractedString = filteredRegionString.slice(
+    //   taiwanIndex + 2,
+    //   taiwanIndex + 5
+    // );
+
+    return data.features[0].text_en;
   } catch (error) {
     console.error(error);
   }
 }
 
-const getSpotData = async (setSpotInfo: (spotInfo: SpotInfo[]) => void) => {
+const getSpotData = async (
+  setSpotInfo: (spotInfo: SpotInfo[]) => void,
+  setIsSpotLoading: (isLoading: boolean) => void
+) => {
   try {
     const response = await fetch(
       'https://services.surfline.com/kbyg/mapview?south=21.755561&west=119.438618&north=25.365470&east=122.025492',
@@ -123,6 +129,7 @@ const getSpotData = async (setSpotInfo: (spotInfo: SpotInfo[]) => void) => {
     });
 
     setSpotInfo(newArray);
+    setIsSpotLoading(false);
   } catch (error) {
     console.error(error);
   }
@@ -147,13 +154,14 @@ const LazyMap = () => {
   const [selectedLevel, setSelectedLevel] = useState<string | undefined>('');
   const [selectedRegion, setSelectedRegion] = useState<string | undefined>('');
   const [favorites, setFavorites] = useState<string[]>([]);
+  const [isSpotLoading, setIsSpotLoading] = useState<boolean>(true);
 
   const markerRef = useRef<L.Marker[]>([]);
-  const ZOOM_LEVEL = 8;
+  const ZOOM_LEVEL = 7;
   const uid = userPrivateStore.getState().userInfo?.uid;
 
   useEffect(() => {
-    getSpotData(setSpotInfo);
+    getSpotData(setSpotInfo, setIsSpotLoading);
     // getSpotByServer(setSpotInfo);
     fetchFavorites();
   }, []);
@@ -164,31 +172,31 @@ const LazyMap = () => {
     console.log(favorites);
   }, [favorites]);
 
-  //定位功能
-  function LocationMarker() {
-    const [position, setPosition] = useState<LatLng | null>(null);
-    const LocateMarkerRef = useRef<L.Marker>(null);
-    const map = useMapEvents({
-      click() {
-        map.locate();
-      },
-      locationfound(e) {
-        setPosition(e.latlng);
-        map.flyTo(e.latlng, map.getZoom());
-        map.once('moveend', () => {
-          // 在這裡添加您想要在 flyTo 完成後執行的操作
+  //定位功能有bug先拿掉
+  // function LocationMarker() {
+  //   const [position, setPosition] = useState<LatLng | null>(null);
+  //   const LocateMarkerRef = useRef<L.Marker>(null);
+  //   const map = useMapEvents({
+  //     click() {
+  //       map.locate();
+  //     },
+  //     locationfound(e) {
+  //       setPosition(e.latlng);
+  //       map.flyTo(e.latlng, map.getZoom());
+  //       map.once('moveend', () => {
+  //         // 在這裡添加您想要在 flyTo 完成後執行的操作
 
-          LocateMarkerRef.current?.openPopup();
-        });
-      },
-    });
+  //         LocateMarkerRef.current?.openPopup();
+  //       });
+  //     },
+  //   });
 
-    return position === null ? null : (
-      <Marker ref={LocateMarkerRef} position={position} icon={LocateIcon}>
-        <Popup>你在這</Popup>
-      </Marker>
-    );
-  }
+  //   return position === null ? null : (
+  //     <Marker ref={LocateMarkerRef} position={position} icon={LocateIcon}>
+  //       <Popup>你在這</Popup>
+  //     </Marker>
+  //   );
+  // }
 
   //左邊浪點list
   const flyToSpot = (
@@ -297,80 +305,87 @@ const LazyMap = () => {
     EPIC: 'text-fuchsia-800',
   };
 
+  const [ref, completion] = useProgressBar();
+
   return (
     <>
       <div className="h-negativeHeader w-screen flex font-bold">
         <div className="w-1/2 flex flex-col bg-[#ffffff]">
-          <div className="h-[100px] w-full flex justify-center items-center mt-4">
-            <button
-              className={
-                !selectedLevel
-                  ? ' bg-gray-900 text-white p-2 rounded-md w-10'
-                  : 'p-2 w-10'
-              }
-              onClick={() => setSelectedLevel('')}
-            >
-              全部
-            </button>
-            {Levels.map((level, idx) => {
-              const isSelected = level === selectedLevel;
-              return (
-                <button
-                  className={
-                    isSelected
-                      ? 'bg-gray-900 text-white p-2 rounded-md w-10'
-                      : 'p-2 w-10'
-                  }
-                  key={idx}
-                  onClick={() => setSelectedLevel(level)}
-                >
-                  {level}
-                </button>
-              );
-            })}
+          <div className="flex border-b-2 border-slate-400 relative">
+            <div className="h-[100px] px-8 w-1/2 flex flex-col   mt-4">
+              <label
+                htmlFor="level"
+                className="block mb-2 text-lg font-bold text-gray-900 dark:text-gray-400"
+              >
+                Level
+              </label>
+
+              <select
+                defaultValue=""
+                onChange={(e) => setSelectedLevel(e.target.value)}
+                id="level"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              >
+                {/* <option selected value="LEVEL" disabled>
+                LEVEL
+              </option> */}
+                <option value="">ALL</option>
+                {Levels.map((level, idx) => {
+                  return (
+                    <option key={idx} value={level}>
+                      {level}
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
+            <div className="h-[100px] px-8 w-1/2 flex flex-col mt-4 ">
+              <label
+                htmlFor="region"
+                className="block mb-2  dark:text-gray-400 text-lg font-bold text-gray-900"
+              >
+                Region
+              </label>
+              <select
+                defaultValue=""
+                onChange={(e) => setSelectedRegion(e.target.value)}
+                id="region"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              >
+                <option value="">ALL</option>
+                {regions.map((region, idx) => {
+                  return (
+                    <option key={idx} value={region}>
+                      {region}
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
+            <span
+              style={{ transform: `translateX(${completion - 100}%)` }}
+              className=" bg-slate-400 h-1 w-full absolute bottom-0 rounded-xl transition-transform duration-500 ease-in-out"
+            />
           </div>
-          <div className="h-[100px] w-full flex justify-center items-center mt-4 border-b-2 border-slate-400">
-            <button
-              className={
-                !selectedRegion
-                  ? 'bg-gray-900 text-white p-2 rounded-md w-10'
-                  : 'p-2 w-10'
-              }
-              onClick={() => setSelectedRegion('')}
-            >
-              全部
-            </button>
-            {regions.map((region, idx) => {
-              const isSelected = region === selectedRegion;
-              return (
-                <button
-                  className={
-                    isSelected
-                      ? 'bg-gray-900 text-white p-2 rounded-md w-10'
-                      : 'p-2 w-10'
-                  }
-                  key={idx}
-                  onClick={() => setSelectedRegion(region)}
-                >
-                  {region}
-                </button>
-              );
-            })}
-          </div>
+
           <motion.div
             layout
-            className="flex flex-wrap overflow-auto h-screen mt-2 px-2 "
+            ref={ref}
+            className="w-full  flex flex-wrap gap-6  px-10 py-10 overflow-auto no-scrollbar"
           >
             <AnimatePresence>
+              {isSpotLoading && <CardSkeleton cards={35} />}
+
               {filteredDiffcultyByLevel?.map((i, idx) => {
                 const waveRatingColor =
                   colorClasses[i.rating.key] || 'text-gray-500';
+
                 return (
                   <motion.div
                     animate={{ opacity: 1 }}
                     initial={{ opacity: 0 }}
                     exit={{ opacity: 0 }}
-                    className=" bg-[#fafafa] h-[280px] w-45% my-4 mx-4 shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,_rgba(0,0,0,0.3)_0px_3px_7px_-3px]  rounded-2xl hover:shadow-[5px_5px_0px_0px_rgba(243,203,172)] transform hover:scale-105 hover:-translate-y-1  transition duration-200 hover:z-10 relative"
+                    className={` bg-slate-100 h-[280px] w-negativeGap  shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,_rgba(0,0,0,0.3)_0px_3px_7px_-3px]  rounded-2xl hover:shadow-[5px_5px_0px_0px_rgba(243,203,172)] transform hover:scale-105 hover:-translate-y-1  transition duration-200 hover:z-10 relative}`}
                     key={idx}
                   >
                     <Link href={`/surf-report/${i._id}`}>
@@ -431,7 +446,7 @@ const LazyMap = () => {
             center={{ lat: 23.553118, lng: 121.0211024 }}
             zoom={ZOOM_LEVEL}
             ref={setMap}
-            className="h-full"
+            className="h-full z-0"
           >
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -453,28 +468,31 @@ const LazyMap = () => {
                     icon={SpotIcon}
                   >
                     <Popup>
-                      <div className="relative">
-                        <div>{i.name}</div>
+                      <div className="">
+                        <div className="flex items-center justify-center text-lg">
+                          <Image
+                            width={50}
+                            height={50}
+                            className=""
+                            alt="spot wheather icon"
+                            src={`https://wa.cdn-surfline.com/quiver/0.21.2/weathericons/${i.weather.condition}.svg`}
+                          />
+                          {i.weather.temperature}°C
+                        </div>
+                        <div className="text-lg">{i.name}</div>
                         <div className={`${waveRatingColor}`}>
                           {i.rating.key.replace(/_/g, ' ')}
                         </div>
-                        <div>{i.weather.temperature}°C</div>
+
                         <div>{i.difficulty ? i.difficulty : '無資料'}</div>
                         <div>{i.region ? i.region : '無資料'}</div>
-                        <Image
-                          width={50}
-                          height={50}
-                          className="absolute right-0 bottom-0"
-                          alt="spot wheather icon"
-                          src={`https://wa.cdn-surfline.com/quiver/0.21.2/weathericons/${i.weather.condition}.svg`}
-                        />
                       </div>
                     </Popup>
                   </Marker>
                 );
               })}
             </MarkerClusterGroup>
-            <LocationMarker />
+            {/* <LocationMarker /> */}
           </MapContainer>
         </div>
       </div>

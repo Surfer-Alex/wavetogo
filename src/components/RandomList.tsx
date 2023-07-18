@@ -1,4 +1,4 @@
-'use client';
+// 'use client';
 import { useEffect, useState } from 'react';
 import { useStore, userPrivateStore } from '@/store';
 import ArrowLeftOutlinedIcon from '@mui/icons-material/ArrowLeftOutlined';
@@ -32,7 +32,6 @@ function RandomList() {
       .sort(() => Math.random() - 0.5)
       .slice(0, 5);
 
-    console.log(randomSpots);
     setRandomSpots(randomSpots);
   };
 
@@ -57,8 +56,8 @@ function RandomList() {
   return (
     !login && (
       <>
-        <div className=" font-bold text-3xl">為你推薦</div>
-        <div className="w-full  relative">
+        <div className=" font-bold text-3xl mt-6">Recommend Spot for you</div>
+        <div className="w-full  relative mt-4">
           <div
             className="absolute -left-7 top-1/2 rounded-3xl flex items-center opacity-40 -translate-y-1/2 text-6xl shadow-[4.0px_8.0px_8.0px_rgba(0,0,0,0.38)] bg-gray-100 hover:opacity-100"
             onClick={handleSlideLeft}
@@ -106,7 +105,7 @@ function RandomList() {
             <ArrowRightOutlinedIcon className="" fontSize="inherit" />
           </div>
         </div>
-        <div className="text-3xl font-bold">Forecast</div>
+        <div className="text-3xl font-bold mt-6">Forecast</div>
         <SpotChart randomSpots={randomSpots} />
       </>
     )
