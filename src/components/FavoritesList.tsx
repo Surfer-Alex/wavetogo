@@ -15,6 +15,7 @@ type ColorClasses = {
 function FavoritesList() {
   const [login, setLogin] = useState(false);
   const [favoritesSpotInfo, setFavoritesSpotInfo] = useState<Spot[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const uid = userPrivateStore.getState().userInfo?.uid;
   const { spotData } = useStore();
 
@@ -34,7 +35,7 @@ function FavoritesList() {
         parsedData.favorites.includes(spot._id)
       );
       setFavoritesSpotInfo(spotInfo);
-      console.log(spotInfo);
+      // setIsLoading(false);
     } catch (err) {
       console.error('Error fetching favorites:', err);
     }
@@ -58,6 +59,10 @@ function FavoritesList() {
     GOOD: 'text-blue-600',
     EPIC: 'text-fuchsia-800',
   };
+
+  // if (isLoading) {
+  //   return <div>Loading...</div>;
+  // }
 
   return (
     login && (
