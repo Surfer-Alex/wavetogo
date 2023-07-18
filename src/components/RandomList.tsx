@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useStore, userStore } from '@/store';
+import { useStore, userPrivateStore } from '@/store';
 import ArrowLeftOutlinedIcon from '@mui/icons-material/ArrowLeftOutlined';
 import ArrowRightOutlinedIcon from '@mui/icons-material/ArrowRightOutlined';
 import Image from 'next/image';
@@ -14,7 +14,8 @@ type ColorClasses = {
 function RandomList() {
   const [login, setLogin] = useState(false);
   const [randomSpots, setRandomSpots] = useState<Spot[]>([]);
-  const uid = userStore.getState().uid;
+  // const userIcon = userPrivateStore((state) => state.userInfo?.photoURL);
+  const uid = userPrivateStore.getState().userInfo?.uid;
   const { spotData } = useStore();
 
   useEffect(() => {

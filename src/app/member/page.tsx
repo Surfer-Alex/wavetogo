@@ -1,100 +1,102 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useSignInWithGoogle } from 'react-firebase-hooks/auth';
+import { useSignInWithGoogle, useAuthState } from 'react-firebase-hooks/auth';
 import { signOut } from 'firebase/auth';
 import { db, auth } from '@/firebase';
 import { setDoc, doc, getDoc } from 'firebase/firestore';
-import { userStore, userPrivateStore } from '@/store';
+import { userPrivateStore } from '@/store';
 import { UserInfo } from '@firebase/auth-types';
 import Image from 'next/image';
-import userIcon from '../../../public/images/icons8-user.gif' 
+import userIcon from '../../../public/images/icons8-user.gif';
+import SignUp from '@/components/member/SignUp';
+import SignInWithNative from '@/components/member/SignInWithNative';
+import GoogleIcon from '@mui/icons-material/Google';
 
 function Page() {
   const [signInWithGoogle, user, loading, fbError] = useSignInWithGoogle(auth);
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState<boolean>(false);
+  // const isLogin = userStore.getState().uid;
+  const [change, setChange] = useState(true);
 
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState<boolean | string>(false);
-  const isLogin = userStore.getState().uid;
+  // useEffect(() => {
 
-  useEffect(() => {
-    setIsUserLoggedIn(isLogin);
-    getUserData(isLogin);
-  }, []);
-
-  useEffect(() => {
-    setUserData();
-  }, [user]);
+  //   getUserData(isLogin);
+  // }, []);
 
   const getUserInfo = userPrivateStore((state) => state.userInfo);
-  // console.log(getUserInfo);
-
-  const setUserData = async () => {
-    try {
-      if (user) {
-        const { uid, email, displayName, phoneNumber, photoURL, providerId } =
-          user.user.providerData[0];
-        const newUser:UserInfo = {
-          uid: uid,
-          email: email,
-          displayName: displayName,
-          phoneNumber: phoneNumber,
-          photoURL: photoURL,
-          providerId: providerId,
-        };
-        await setDoc(doc(db, 'users', uid), newUser,{ merge: true });
-        userStore.setState({ uid: uid,photoURL:photoURL||'' });
-        userPrivateStore.setState({ userInfo: newUser });
-        setIsUserLoggedIn(true);
-      }
-    } catch (err) {
-      console.error('Error: ', err);
-    }
-  };
-
-  const getUserData = async (uid: string) => {
-    try {
-      if (uid) {
-        const docSnap = await getDoc(doc(db, 'users', uid));
-        const userInfo = (await docSnap.data()) as UserInfo;
-        userPrivateStore.setState({ userInfo });
-      }
-    } catch (err) {
-      console.error('Error:', err);
-    }
-  };
+  console.log(getUserInfo);
 
   async function Logout() {
     await signOut(auth);
-    userStore.setState({ uid: '',photoURL:''});
     userPrivateStore.setState({ userInfo: null });
-    setIsUserLoggedIn(false);
   }
 
   return (
-    <div className="w-full flex justify-center">
-      <div className="max-w-[1280px] w-full flex">
-        {!isUserLoggedIn && (
-          <div className='flex justify-center'>
-          <button onClick={() => signInWithGoogle()}>
-            Continue with Google
-          </button>
+    <>
+      {!getUserInfo ? (
+        <div className="w-full flex">
+          <div className="w-1/2 flex flex-col items-center justify-center">
+            <div className="w-3/5">
+              <div className="text-8xl font-black text-center">Hi Surfer!</div>
+              {change ? (
+                <>
+                  <button
+                    className="mt-2 w-full rounded-full border border-slate-400 px-2 py-2"
+                    onClick={() => signInWithGoogle()}
+                  >
+                    <GoogleIcon className="mr-2" />
+                    Continue with Google
+                  </button>
+                  <div className="flex items-center justify-center mt-4">
+                    <div className="border-t border-slate-400 w-1/3" />
+                    <div className="mx-2 text-center">OR</div>
+                    <div className=" w-1/3 border-t border-slate-400" />
+                  </div>
+                  <SignInWithNative setIsUserLoggedIn={setIsUserLoggedIn} />
+                  <button
+                    onClick={() => setChange((prev) => !prev)}
+                    className=" mt-4"
+                  >
+                    Sign Up
+                  </button>
+                </>
+              ) : (
+                <>
+                  <SignUp setIsUserLoggedIn={setIsUserLoggedIn} />
+                  <button
+                    onClick={() => setChange((prev) => !prev)}
+                    className="mt-4"
+                  >
+                    Already have account?
+                  </button>
+                </>
+              )}
+            </div>
           </div>
-        )}
-        {isUserLoggedIn && (
-          <div className="w-1/4 flex flex-col">
-            <button className="h-[100px]">個人資訊</button>
-            <button className="h-[100px]">收藏浪點</button>
-            <button className="h-[100px]">已回報浪況</button>
+          <div className="w-1/2 relative h-negativeHeaderFooter">
+            <Image
+              src={'https://source.unsplash.com/ChOHCv42flI'}
+              alt="signIn campaign"
+              fill
+              quality={100}
+            />
           </div>
-        )}
-        
-          {isUserLoggedIn && (
+        </div>
+      ) : (
+        <div className="w-full flex justify-center">
+          <div className="max-w-[1280px] w-full flex">
+            <div className="w-1/4 flex flex-col">
+              <button className="h-[100px]">個人資訊</button>
+              <button className="h-[100px]">收藏浪點</button>
+              <button className="h-[100px]">已回報浪況</button>
+            </div>
             <div className="w-3/4 flex flex-col items-center">
               <Image
                 width={100}
                 height={100}
                 alt="user icon"
                 src={getUserInfo?.photoURL || userIcon}
-                className='rounded-full'
+                className="rounded-full"
               />
               <div>{getUserInfo?.displayName}</div>
               <div>{getUserInfo?.email}</div>
@@ -102,10 +104,13 @@ function Page() {
                 Sign out
               </button>
             </div>
-          )}
-        
-      </div>
-    </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 export default Page;
+{
+  /* <button onClick={()=>{signOut(auth)}}>logout</button> */
+}

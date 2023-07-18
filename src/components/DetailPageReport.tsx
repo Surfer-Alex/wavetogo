@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { useStore, userStore } from '@/store';
+import { useStore, userPrivateStore } from '@/store';
 import FlagCircleIcon from '@mui/icons-material/FlagCircle';
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
 
@@ -9,6 +9,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
 import { DateTimePicker } from '@mui/x-date-pickers';
 import { db } from '@/firebase';
+import { redirect } from 'next/navigation';
 import {
   collection,
   getDocs,
@@ -24,8 +25,9 @@ import {
   onSnapshot,
   serverTimestamp,
   Timestamp,
-  orderBy
+  orderBy,
 } from 'firebase/firestore';
+import Link from 'next/link';
 
 interface ChartProps {
   id: string;
@@ -34,12 +36,12 @@ interface MyDate extends Date {
   ts: number;
 }
 interface Report {
-    conditionsTime: number;
-    serverTime: Timestamp;
-    content: string;
-    userPhoto: string;
-    uid: string;
-  }
+  conditionsTime: number;
+  serverTime: Timestamp;
+  content: string;
+  userPhoto: string;
+  uid: string;
+}
 
 function DetailPageReport({ id }: ChartProps) {
   const [isLogin, setIsLogin] = useState(false);
@@ -51,22 +53,24 @@ function DetailPageReport({ id }: ChartProps) {
   // console.log(message);
 
   const { spotData } = useStore();
-  const { uid, photoURL } = userStore();
-    
-    
-  useEffect(() => {
-    getSub();
-    if (uid.length > 0) {
-      setIsLogin(true);
-    }
-    
-  }, []);
+  const getUserInfo = userPrivateStore((state) => state.userInfo);
 
   useEffect(() => {
-    console.log('state的',reports);
-    
-  }, [reports])
-  
+    getSub();
+  }, []);
+  useEffect(() => {
+    console.log('是否登入', isLogin);
+  }, [isLogin]);
+  useEffect(() => {
+    if (getUserInfo && getUserInfo.uid.length > 0) {
+      setIsLogin(true);
+    }
+  }, [getUserInfo]);
+
+  useEffect(() => {
+    console.log('state的', reports);
+  }, [reports]);
+
   const q = query(collection(db, 'surfSpots'), where('id', '==', id));
 
   async function addReport(e: React.FormEvent) {
@@ -80,8 +84,8 @@ function DetailPageReport({ id }: ChartProps) {
         conditionsTime: (selectedDateTime as MyDate).ts,
         serverTime: serverTimestamp(),
         content: message,
-        userPhoto: photoURL,
-        uid,
+        userPhoto: getUserInfo?.photoURL,
+        uid: getUserInfo?.uid,
       });
     });
   }
@@ -93,7 +97,7 @@ function DetailPageReport({ id }: ChartProps) {
     const ref = collection(db, `surfSpots/${docId}/reports`);
     const sorted = query(ref, orderBy('serverTime', 'desc'));
     const unsub = onSnapshot(sorted, (doc) => {
-      const list:Report[]=[];
+      const list: Report[] = [];
       doc.forEach((doc) => {
         list.push(doc.data() as Report);
       });
@@ -133,96 +137,46 @@ function DetailPageReport({ id }: ChartProps) {
           <div className="ml-1 flex items-center">WAVE REPORT</div>
         </div>
         <div className="w-full h-[290px] px-12 font-bold overflow-auto ">
-            {reports&&reports.map((i,idx)=>{
-                return(
-                    <div key={idx} className="mt-4 flex flex-col rounded-2xl px-2 py-2 shadow-[5px_5px_0px_0px_rgba(110,116,139)] bg-white">
-            <div className="flex">
-              <div className="flex items-center">
-                <Image
-                  src={i.userPhoto}
-                  alt={'userPhoto'}
-                  width={30}
-                  height={30}
-                />
-                <div className="ml-2">{i.uid}</div>
-              </div>
-              <div className="ml-auto w-5/6 text-base font-normal flex items-center">
-                
-                {i.content}
-              </div>
+          {reports && reports.length > 0 ? (
+            reports.map((i, idx) => {
+              return (
+                <div
+                  key={idx}
+                  className="mt-4 flex flex-col rounded-2xl px-2 py-2 shadow-[5px_5px_0px_0px_rgba(110,116,139)] bg-white"
+                >
+                  <div className="flex">
+                    <div className="flex items-center">
+                      <Image
+                        src={i.userPhoto}
+                        alt={'userPhoto'}
+                        width={30}
+                        height={30}
+                      />
+                      <div className="ml-2">{i.uid}</div>
+                    </div>
+                    <div className="ml-auto w-5/6 text-base font-normal flex items-center">
+                      {i.content}
+                    </div>
+                  </div>
+                  <div className="ml-auto mt-1 font-normal text-slate-800">
+                    Report time :{' '}
+                    {new Date(i.conditionsTime).toLocaleString('en-US', {
+                      year: 'numeric',
+                      month: 'numeric',
+                      day: 'numeric',
+                      hour: 'numeric',
+                      minute: 'numeric',
+                      hour12: true,
+                    })}
+                  </div>
+                </div>
+              );
+            })
+          ) : (
+            <div className="w-full h-full flex justify-center items-center text-2xl">
+              No current reports
             </div>
-            <div className="ml-auto mt-1 font-normal text-slate-800">
-              Report time : {new Date(i.conditionsTime).toLocaleString("en-US", {
-  year: "numeric",
-  month: "numeric",
-  day: "numeric",
-  hour: "numeric",
-  minute: "numeric",
-  hour12: true
-})}
-            </div>
-          </div>
-                )
-            })}
-          {/* <div className="mt-4 flex flex-col rounded-2xl px-2 py-2 shadow-[5px_5px_0px_0px_rgba(110,116,139)] bg-white">
-            <div className="flex">
-              <div className="flex items-center">
-                <Image
-                  src={photoURL}
-                  alt={'userPhoto'}
-                  width={30}
-                  height={30}
-                />
-                <div className="ml-2">Alex</div>
-              </div>
-              <div className="ml-auto w-5/6 text-base font-normal flex items-center">
-                The waves are powerful and very long, you can ride them all the
-                way to the shore, but it takes a long time to paddle back to the
-                line-up.
-              </div>
-            </div>
-            <div className="ml-auto mt-1 font-normal text-slate-800">
-              Report time : 2022/7/14 8:08 pm
-            </div>
-          </div> */}
-          {/* <div className="mt-4 flex flex-col rounded-2xl px-2 py-2 shadow-[5px_5px_0px_0px_rgba(110,116,139)] bg-white">
-            <div className="flex">
-              <div className="flex items-center">
-                <Image
-                  src={photoURL}
-                  alt={'userPhoto'}
-                  width={30}
-                  height={30}
-                />
-                <div className="ml-2">Kanoa</div>
-              </div>
-              <div className="ml-auto w-5/6 text-base font-normal flex items-center">
-                So stoked! Not crowded, 4~5 feet and breezy wind!
-              </div>
-            </div>
-            <div className="ml-auto mt-1 font-normal text-slate-800">
-              Report time : 2022/7/13 07:08 pm
-            </div>
-          </div>
-          <div className="mt-4 flex flex-col rounded-2xl px-2 py-2 shadow-[5px_5px_0px_0px_rgba(110,116,139)] bg-white">
-            <div className="flex">
-              <div className="flex items-center">
-                <Image
-                  src={photoURL}
-                  alt={'userPhoto'}
-                  width={30}
-                  height={30}
-                />
-                <div className="ml-2">Griffin</div>
-              </div>
-              <div className="ml-auto w-5/6 text-base font-normal flex items-center">
-                No one out there! The waves are EPIC!
-              </div>
-            </div>
-            <div className="ml-auto mt-1 font-normal text-slate-800">
-              Report time : 2022/7/11 12:08 pm
-            </div>
-          </div> */}
+          )}
         </div>
         <div className="text-2xl h-[54px] font-bold flex items-center justify-center">
           <button
@@ -241,42 +195,61 @@ function DetailPageReport({ id }: ChartProps) {
               onClick={(e) => e.stopPropagation()}
               className={`w-1/3 h-2/3 bg-white  text-black relative`}
             >
-              <div className="h-full">
-                <div className="text-2xl text-center mt-3">
-                  WAVE CONDITIONS REPORT
+              {isLogin ? (
+                <div className="h-full">
+                  <div className="text-2xl text-center mt-3">
+                    WAVE CONDITIONS REPORT
+                  </div>
+
+                  <div className="w-full flex flex-col mt-4 px-4">
+                    <form onSubmit={(e) => addReport(e)}>
+                      <LocalizationProvider dateAdapter={AdapterLuxon}>
+                        <DateTimePicker
+                          label="Condition Report Time"
+                          value={selectedDateTime}
+                          onChange={(newValue) => setSelectedDateTime(newValue)}
+                        />
+
+                        <label
+                          htmlFor="message"
+                          className="block mb-2 text-xl font-medium text-gray-900 dark:text-white mt-4"
+                        >
+                          report content
+                        </label>
+                        <textarea
+                          id="message"
+                          rows={8}
+                          className=" block p-2.5 w-full text-xl text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          placeholder="Write your thoughts here..."
+                          onChange={(e) => setMessage(e.target.value)}
+                        ></textarea>
+                      </LocalizationProvider>
+                      <div className="flex h-full items-center justify-center">
+                        <button className=" w-1/3 rounded-2xl bg-black text-white px-2 py-1 mt-4">
+                          submit
+                        </button>
+                      </div>
+                    </form>
+                  </div>
                 </div>
-
-                <div className="w-full flex flex-col mt-4 px-4">
-                  <form onSubmit={(e) => addReport(e)}>
-                    <LocalizationProvider dateAdapter={AdapterLuxon}>
-                      <DateTimePicker
-                        label="Condition Report Time"
-                        value={selectedDateTime}
-                        onChange={(newValue) => setSelectedDateTime(newValue)}
-                      />
-
-                      <label
-                        htmlFor="message"
-                        className="block mb-2 text-xl font-medium text-gray-900 dark:text-white mt-4"
-                      >
-                        report content
-                      </label>
-                      <textarea
-                        id="message"
-                        rows={8}
-                        className=" block p-2.5 w-full text-xl text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder="Write your thoughts here..."
-                        onChange={(e) => setMessage(e.target.value)}
-                      ></textarea>
-                    </LocalizationProvider>
-                    <div className="flex h-full items-center justify-center">
-                      <button className=" w-1/3 rounded-2xl bg-black text-white px-2 py-1 mt-4">
-                        submit
-                      </button>
+              ) : (
+                <div className="h-full">
+                  <div className="text-2xl text-center mt-3">
+                    WAVE CONDITIONS REPORT
+                  </div>
+                  <div className="w-full h-3/5 flex flex-col mt-4 px-4 justify-center items-center">
+                    <div className="flex items-center justify-center text-lg">
+                      Please log in to leave a comment.
                     </div>
-                  </form>
+                    <Link href="/member" className="text-lg mt-4 w-1/2">
+                      <button className="w-full border-slate-400 border rounded-full px-3 py-3">
+                        Login
+                      </button>
+                    </Link>
+                  </div>
                 </div>
-              </div>
+              )}
+
               <button
                 onClick={() => setOpen(false)}
                 className="absolute right-2 top-2 text-gray-400 text-3xl hover:text-black "
