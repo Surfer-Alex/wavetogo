@@ -11,8 +11,9 @@ const CardSkeleton = ({ cards }: CardSkeletonProps) => {
         className="bg-slate-100 rounded-2xl h-[280px] w-negativeGap"
       >
         <Skeleton
-          className="w-full h-[162px] rounded-t-2xl"
+          className="w-full  rounded-t-2xl"
           variant="rounded"
+          height={162}
         />
         <div className="ml-6 mt-1 flex  items-center">
           <Skeleton

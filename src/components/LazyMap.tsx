@@ -207,7 +207,7 @@ const LazyMap = () => {
   ) => {
     event.preventDefault();
     if (map) {
-      map.flyTo([lat, lon], 15);
+      map.flyTo([lat, lon], 15, { duration: 1.5 });
       map.once('moveend', () => {
         // 在這裡添加您想要在 flyTo 完成後執行的操作
         if (markerRef.current && markerRef.current[idx]) {
