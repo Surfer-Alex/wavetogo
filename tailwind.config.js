@@ -16,6 +16,7 @@ module.exports = {
         '16%': '16%',
         '32%': '32%',
         '45%': '45%',
+        negativeGap: 'calc((100% - 24px)/2)',
       },
       // backgroundImage: (theme) => ({
       //   waves: "url('https://source.unsplash.com/ChOHCv42flI')",
@@ -24,9 +25,6 @@ module.exports = {
         negativeHeader: 'calc(100vh - 80px)',
         negativeHeaderFooter: 'calc(100vh - 160px)',
         negativeSearchBar: 'calc(100% - 80px)',
-      },
-      width: {
-        negativeGap: 'calc((100% - 24px)/2)',
       },
       // backgroundImage: {
       //   'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
