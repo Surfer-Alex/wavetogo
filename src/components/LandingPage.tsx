@@ -2,11 +2,10 @@
 import { Permanent_Marker } from 'next/font/google';
 import Image from 'next/image';
 import landing from '../../public/images/landing.jpg';
-import FavoritesList from '@/components/FavoritesList';
-import RandomList from '@/components/RandomList';
 import { useEffect, useRef } from 'react';
 import ExpandCircleDownRoundedIcon from '@mui/icons-material/ExpandCircleDownRounded';
 import { userPrivateStore } from '@/store';
+import HomePageSpotList from './HomePageSpotList';
 
 const inter = Permanent_Marker({
   subsets: ['latin'],
@@ -18,10 +17,9 @@ const LandingPage = () => {
     ref.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const uid = userPrivateStore.getState().userInfo?.uid;
-
+  const uid = userPrivateStore((state) => state.userInfo?.uid);
   useEffect(() => {
-    console.log(uid);
+    console.log('這是', uid);
   }, [uid]);
 
   return (
@@ -33,7 +31,7 @@ const LandingPage = () => {
           height={1000}
           quality={100}
           alt="landing"
-          className="mask-waves w-screen h-screen object-fill rounded-b-6xl   "
+          className="mask-waves w-screen h-screen object-fill rounded-b-6xl "
         />
         <div
           className={`mb-10 text-white text-9xl  absolute   ${inter.className} transform  -skew-y-12 drop-shadow-2xl`}
@@ -52,8 +50,7 @@ const LandingPage = () => {
       </div>
       <div ref={ref} className="max-w-[1440px] w-full px-12">
         <div className="w-full flex flex-col mb-6">
-          <RandomList />
-          <FavoritesList />
+          <HomePageSpotList uid={uid} />
         </div>
       </div>
     </>

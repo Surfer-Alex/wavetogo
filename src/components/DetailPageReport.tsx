@@ -9,7 +9,6 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
 import { DateTimePicker } from '@mui/x-date-pickers';
 import { db } from '@/firebase';
-import { DateTime } from 'luxon';
 
 import {
   collection,
@@ -17,12 +16,6 @@ import {
   query,
   where,
   addDoc,
-  doc,
-  setDoc,
-  getDoc,
-  updateDoc,
-  arrayUnion,
-  arrayRemove,
   onSnapshot,
   serverTimestamp,
   Timestamp,
@@ -61,18 +54,12 @@ function DetailPageReport({ id }: ChartProps) {
   useEffect(() => {
     getSub();
   }, []);
-  useEffect(() => {
-    console.log('是否登入', isLogin);
-  }, [isLogin]);
+
   useEffect(() => {
     if (getUserInfo && getUserInfo.uid.length > 0) {
       setIsLogin(true);
     }
   }, [getUserInfo]);
-
-  useEffect(() => {
-    console.log('state的', reports);
-  }, [reports]);
 
   const q = query(collection(db, 'surfSpots'), where('id', '==', id));
 
@@ -117,6 +104,7 @@ function DetailPageReport({ id }: ChartProps) {
       });
       setReports(list);
     });
+    return () => unsub();
   }
 
   const spotInfo = spotData.data.spots

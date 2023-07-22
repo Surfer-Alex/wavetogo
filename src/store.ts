@@ -88,9 +88,11 @@ export const useStore = create<State>((set) => ({
 //   )
 // );
 
-export const userPrivateStore = create<UserPrivateState>(() => ({
-  userInfo: null,
-}));
+export const userPrivateStore = create<UserPrivateState>(
+  devtools(() => ({
+    userInfo: null,
+  }))
+);
 
 // setData:()=>{
 //     set({

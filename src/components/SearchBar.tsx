@@ -16,7 +16,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ setOpen, open }) => {
   const [inputValue, setInputValue] = useState('');
 
   const spotInfo = useStore((state) => state.spotData.data.spots);
-  console.log(spotInfo);
+
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
     if (e.target.value === '') {
