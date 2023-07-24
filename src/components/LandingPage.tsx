@@ -18,9 +18,6 @@ const LandingPage = () => {
   };
 
   const uid = userPrivateStore((state) => state.userInfo?.uid);
-  useEffect(() => {
-    console.log('這是', uid);
-  }, [uid]);
 
   return (
     <>

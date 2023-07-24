@@ -10,17 +10,12 @@ import Link from 'next/link';
 type ColorClasses = {
   [key: string]: string;
 };
-// interface UidProps{
-//     uid:string;
-// }
+
 interface UidProps {
   uid: string | undefined;
 }
 function HomePageSpotList({ uid }: UidProps) {
   const [spots, setSpots] = useState<Spot[]>([]);
-  // const userIcon = userPrivateStore((state) => state.userInfo?.photoURL);
-  // const uid = userPrivateStore.getState().userInfo?.uid;
-  //   const uid = userPrivateStore((state) => state.userInfo?.uid);
   const { spotData } = useStore();
 
   useEffect(() => {
@@ -48,7 +43,6 @@ function HomePageSpotList({ uid }: UidProps) {
         parsedData.favorites.includes(spot._id)
       );
       setSpots(spotInfo);
-      // setIsLoading(false);
     } catch (err) {
       console.error('Error fetching favorites:', err);
     }
