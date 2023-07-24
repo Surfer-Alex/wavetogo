@@ -5,6 +5,7 @@ import {
 } from 'react-firebase-hooks/auth';
 import { db, auth } from '@/firebase';
 import { VariantType, useSnackbar } from 'notistack';
+import { useRouter } from 'next/navigation';
 type Props = {
   setIsUserLoggedIn: (value: boolean) => void;
 };
@@ -20,6 +21,7 @@ function SignUp({ setIsUserLoggedIn }: Props) {
     useCreateUserWithEmailAndPassword(auth);
   const [updateProfile, updating, updateError] = useUpdateProfile(auth);
   const { enqueueSnackbar } = useSnackbar();
+  const router = useRouter();
 
   //   useEffect(() => {
   //     console.log('user變化', user);
@@ -51,6 +53,7 @@ function SignUp({ setIsUserLoggedIn }: Props) {
       );
       return;
     }
+    router.push('/');
     enqueueSnackbar('Sign Up successfully !', { variant });
 
     await createUserWithEmailAndPassword(signUpForm.email, signUpForm.password);

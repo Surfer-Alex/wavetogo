@@ -56,7 +56,7 @@ function DetailPageReport({ id }: ChartProps) {
   }, []);
 
   useEffect(() => {
-    if (getUserInfo && getUserInfo.uid.length > 0) {
+    if (getUserInfo && (getUserInfo.uid as string).length > 0) {
       setIsLogin(true);
     }
   }, [getUserInfo]);

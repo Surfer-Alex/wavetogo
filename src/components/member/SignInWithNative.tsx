@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { db, auth } from '@/firebase';
 import { VariantType, useSnackbar } from 'notistack';
+import { useRouter } from 'next/navigation';
 type Props = {
-    setIsUserLoggedIn: (value: boolean) => void;
-  };
+  setIsUserLoggedIn: (value: boolean) => void;
+};
 const SignInWithNative = ({ setIsUserLoggedIn }: Props) => {
   const [signInForm, setSignInForm] = useState({
     email: '',
@@ -12,12 +13,18 @@ const SignInWithNative = ({ setIsUserLoggedIn }: Props) => {
   });
   const [signInWithEmailAndPassword, user, loading, fbError] =
     useSignInWithEmailAndPassword(auth);
-    const { enqueueSnackbar } = useSnackbar();
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>,variant: VariantType) => {
+  const { enqueueSnackbar } = useSnackbar();
+  const router = useRouter();
+
+  const handleSubmit = (
+    e: React.FormEvent<HTMLFormElement>,
+    variant: VariantType
+  ) => {
     e.preventDefault();
 
     signInWithEmailAndPassword(signInForm.email, signInForm.password);
     setIsUserLoggedIn(true);
+    router.push('/');
     enqueueSnackbar('Login successfully !', { variant });
   };
 
@@ -28,14 +35,17 @@ const SignInWithNative = ({ setIsUserLoggedIn }: Props) => {
     }));
   };
   return (
-    <form onSubmit={(e)=>handleSubmit(e,'success')} className='flex flex-col mt-4 w-full'>
+    <form
+      onSubmit={(e) => handleSubmit(e, 'success')}
+      className="flex flex-col mt-4 w-full"
+    >
       <input
         required
         name="email"
         placeholder="email"
         type="Your email..."
         onChange={handleChange}
-        className='mt-3 border border-slate-400 rounded-xl px-2 py-2'        
+        className="mt-3 border border-slate-400 rounded-xl px-2 py-2"
       />
       <input
         required
@@ -43,12 +53,17 @@ const SignInWithNative = ({ setIsUserLoggedIn }: Props) => {
         placeholder="password"
         type="Choose a strong password..."
         onChange={handleChange}
-        className='mt-3 border border-slate-400 rounded-xl px-2 py-2'        
+        className="mt-3 border border-slate-400 rounded-xl px-2 py-2"
       />
 
       {fbError && <div>fbError.message</div>}
 
-      <button type="submit" className='mt-6 bg-black text-white rounded-full px-2 py-2'>Sign In</button>
+      <button
+        type="submit"
+        className="mt-6 bg-black text-white rounded-full px-2 py-2"
+      >
+        Sign In
+      </button>
     </form>
   );
 };
