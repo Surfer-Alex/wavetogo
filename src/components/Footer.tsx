@@ -1,33 +1,43 @@
-'use client'
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import logo from '../../public/images/logo.png'
-import React from 'react'
-import  Image from 'next/image'
-
+"use client";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import logo from "../../public/images/logo.png";
+import React from "react";
+import Image from "next/image";
+import { Shrikhand } from "next/font/google";
+const inter = Shrikhand({
+  subsets: ["latin"],
+  weight: "400",
+});
 const Footer = () => {
   const pathname = usePathname();
-  const isActive = pathname === '/surf-spot-map';
-  if(isActive){
-  return;
+  const isActive = pathname === "/surf-spot-map";
+  if (isActive) {
+    return;
   }
   return (
-    
-    <div className="flex h-[80px] w-full  bottom-0 text-black text-2xl bg-[rgb(220,219,219)] ">
-       <Link className='flex' href="/">
-          <div className="h-full w-[80px] ml-8">
-            <Image quality={100} src={logo} width={500} height={500} alt='logo' className='w-full h-full  rounded-full'/>
-          </div>
-          <div className="self-center  ">
-            WAVE TO GO
-          </div>
-        </Link>
-      
-      <button className="self-center ml-auto  ">GITHUB</button>
-      <div className="self-center ml-10 mr-10  ">LINKEDIN</div>
+    <div className="bottom-0 flex h-[80px]  w-full bg-[rgb(220,219,219)] text-base text-black sm:text-2xl ">
+      <Link className="flex items-center opacity-90 hover:opacity-100" href="/">
+        <div className="relative ml-4 h-[50px] w-[50px] sm:ml-8 sm:h-full sm:w-[80px]">
+          <Image
+            quality={100}
+            src={logo}
+            fill
+            alt="logo"
+            className="h-full w-full  rounded-full"
+          />
+        </div>
+        <div
+          className={`${inter.className} self-center text-lg text-teal-500 sm:text-3xl lg:block`}
+        >
+          Wavetogo
+        </div>
+      </Link>
+
+      <button className="ml-auto self-center font-medium">GITHUB</button>
+      <div className=" mx-5 self-center font-medium sm:mx-10">LINKEDIN</div>
     </div>
+  );
+};
 
-  )
-}
-
-export default Footer
+export default Footer;

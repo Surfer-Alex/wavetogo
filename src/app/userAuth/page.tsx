@@ -1,12 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useSignInWithGoogle, useAuthState } from 'react-firebase-hooks/auth';
+import { useSignInWithGoogle } from 'react-firebase-hooks/auth';
 
-import { db, auth } from '@/firebase';
-import { setDoc, doc, getDoc } from 'firebase/firestore';
-import { userPrivateStore } from '@/store';
-import { UserInfo } from '../../../types/userTypes';
-import { usePathname } from 'next/navigation';
+import { auth } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
@@ -17,9 +13,6 @@ import GoogleIcon from '@mui/icons-material/Google';
 function Page() {
   const [signInWithGoogle, user, loading, fbError] = useSignInWithGoogle(auth);
   const [isUserLoggedIn, setIsUserLoggedIn] = useState<boolean>(false);
-  //   const pathname = usePathname();
-  //   const isActive = pathname === '/';
-  // const isLogin = userStore.getState().uid;
   const [change, setChange] = useState(true);
   const router = useRouter();
 
@@ -28,8 +21,6 @@ function Page() {
       router.push('/');
     }
   }, [user]);
-
-  //   const getUserInfo = userPrivateStore((state) => state.userInfo);
 
   return (
     <>
