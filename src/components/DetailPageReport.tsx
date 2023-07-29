@@ -46,8 +46,6 @@ function DetailPageReport({ id }: ChartProps) {
   const [reports, setReports] = useState<Report[]>([]);
   const [dateTimeError, setDateTimeError] = useState<string>("");
 
-  // console.log(message);
-
   const { spotData } = useStore();
   const getUserInfo = userPrivateStore((state) => state.userInfo);
 
