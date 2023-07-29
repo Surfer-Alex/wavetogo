@@ -1,15 +1,14 @@
-'use client';
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { useStore, userPrivateStore } from '@/store';
-import FlagCircleIcon from '@mui/icons-material/FlagCircle';
-import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
+"use client";
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import { useStore, userPrivateStore } from "@/store";
+import FlagCircleIcon from "@mui/icons-material/FlagCircle";
+import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
 
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
-import { DateTimePicker } from '@mui/x-date-pickers';
-import { db } from '@/firebase';
-import { DateTime } from 'luxon';
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
+import { DateTimePicker } from "@mui/x-date-pickers";
+import { db } from "@/firebase";
 
 import {
   collection,
@@ -17,18 +16,12 @@ import {
   query,
   where,
   addDoc,
-  doc,
-  setDoc,
-  getDoc,
-  updateDoc,
-  arrayUnion,
-  arrayRemove,
   onSnapshot,
   serverTimestamp,
   Timestamp,
   orderBy,
-} from 'firebase/firestore';
-import Link from 'next/link';
+} from "firebase/firestore";
+import Link from "next/link";
 
 interface ChartProps {
   id: string;
@@ -49,9 +42,9 @@ function DetailPageReport({ id }: ChartProps) {
   const [isLogin, setIsLogin] = useState(false);
   const [open, setOpen] = useState(false);
   const [selectedDateTime, setSelectedDateTime] = useState<Date | null>(null);
-  const [message, setMessage] = useState<string>('');
+  const [message, setMessage] = useState<string>("");
   const [reports, setReports] = useState<Report[]>([]);
-  const [dateTimeError, setDateTimeError] = useState<string>('');
+  const [dateTimeError, setDateTimeError] = useState<string>("");
 
   // console.log(message);
 
@@ -61,34 +54,28 @@ function DetailPageReport({ id }: ChartProps) {
   useEffect(() => {
     getSub();
   }, []);
+
   useEffect(() => {
-    console.log('是否登入', isLogin);
-  }, [isLogin]);
-  useEffect(() => {
-    if (getUserInfo && getUserInfo.uid.length > 0) {
+    if (getUserInfo && (getUserInfo.uid as string)?.length > 0) {
       setIsLogin(true);
     }
   }, [getUserInfo]);
 
-  useEffect(() => {
-    console.log('state的', reports);
-  }, [reports]);
-
-  const q = query(collection(db, 'surfSpots'), where('id', '==', id));
+  const q = query(collection(db, "surfSpots"), where("id", "==", id));
 
   async function addReport(e: React.FormEvent) {
     e.preventDefault();
     if (selectedDateTime === null) {
-      setDateTimeError('DateTimePicker Required!');
+      setDateTimeError("DateTimePicker Required!");
       return;
     } else {
-      setDateTimeError('');
+      setDateTimeError("");
     }
 
     const querySnapshot = await getDocs(q);
 
     querySnapshot.forEach((i) => {
-      const docRef = collection(db, 'surfSpots', i.id, 'reports');
+      const docRef = collection(db, "surfSpots", i.id, "reports");
       addDoc(docRef, {
         conditionsTime: (selectedDateTime as MyDate).ts,
         serverTime: serverTimestamp(),
@@ -100,7 +87,7 @@ function DetailPageReport({ id }: ChartProps) {
     });
 
     setSelectedDateTime(null);
-    setMessage('');
+    setMessage("");
     setOpen(false);
   }
 
@@ -109,7 +96,7 @@ function DetailPageReport({ id }: ChartProps) {
     const docId = querySnapshot.docs[0].id;
 
     const ref = collection(db, `surfSpots/${docId}/reports`);
-    const sorted = query(ref, orderBy('serverTime', 'desc'));
+    const sorted = query(ref, orderBy("serverTime", "desc"));
     const unsub = onSnapshot(sorted, (doc) => {
       const list: Report[] = [];
       doc.forEach((doc) => {
@@ -117,6 +104,7 @@ function DetailPageReport({ id }: ChartProps) {
       });
       setReports(list);
     });
+    return () => unsub();
   }
 
   const spotInfo = spotData.data.spots
@@ -125,7 +113,7 @@ function DetailPageReport({ id }: ChartProps) {
 
   if (spotInfo.length === 0) {
     return (
-      <div className="w-screen h-negativeHeader flex justify-center items-center">
+      <div className="flex h-negativeHeader w-screen items-center justify-center">
         <div
           className="inline-block h-14 w-14 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
           role="status"
@@ -139,42 +127,42 @@ function DetailPageReport({ id }: ChartProps) {
   }
 
   return (
-    <div className="w-full h-[400px] flex ">
-      <div className="w-1/2 h-full relative">
+    <div className="flex h-[400px] w-full ">
+      <div className="relative h-full w-1/2">
         <Image
           priority={true}
           width={1200}
           height={600}
           quality={100}
-          className="w-full h-full"
+          className="h-full w-full"
           alt="spot static map with marker"
           src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v11/static/pin-l+f44546(${spotInfo[0].lon},${spotInfo[0].lat})/${spotInfo[0].lon},${spotInfo[0].lat},15,0/1200x600?access_token=${process.env.NEXT_PUBLIC_MAPBOX_API_KEY}&logo=false`}
         />
-        <div className="w-full h-full absolute top-0 left-0 flex justify-center items-center font-black text-6xl text-white opacity-70 ">
+        <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center text-6xl font-black text-white opacity-70 ">
           {spotInfo[0].name}
         </div>
       </div>
 
-      <div className="w-1/2 flex flex-col bg-slate-200">
-        <div className="w-full flex justify-center text-2xl font-bold mt-4">
+      <div className="flex w-1/2 flex-col bg-slate-200">
+        <div className="mt-4 flex w-full justify-center text-2xl font-bold">
           <div className="text-4xl">
             <FlagCircleIcon fontSize="inherit" />
           </div>
           <div className="ml-1 flex items-center">WAVE REPORT</div>
         </div>
-        <div className="w-full h-[280px] px-12 font-bold overflow-auto ">
+        <div className="h-[280px] w-full overflow-auto px-12 font-bold ">
           {reports && reports.length > 0 ? (
             reports.map((i, idx) => {
               return (
                 <div
                   key={idx}
-                  className="mt-4 flex flex-col rounded-2xl px-2 py-2 shadow-[5px_5px_0px_0px_rgba(110,116,139)] bg-white"
+                  className="mt-4 flex flex-col rounded-2xl bg-white px-2 py-2 shadow-[5px_5px_0px_0px_rgba(110,116,139)]"
                 >
                   <div className="flex">
                     <div className="flex items-center">
                       <Image
                         src={i.userPhoto}
-                        alt={'userPhoto'}
+                        alt={"userPhoto"}
                         width={30}
                         height={30}
                         quality={100}
@@ -182,18 +170,18 @@ function DetailPageReport({ id }: ChartProps) {
                       />
                       <div className="ml-2">{i.displayName}</div>
                     </div>
-                    <div className="ml-auto w-5/6 text-base font-normal flex items-center">
+                    <div className="ml-auto flex w-5/6 items-center text-base font-normal">
                       {i.content}
                     </div>
                   </div>
                   <div className="ml-auto mt-1 font-normal text-slate-800">
-                    Report time :{' '}
-                    {new Date(i.conditionsTime).toLocaleString('en-US', {
-                      year: 'numeric',
-                      month: 'numeric',
-                      day: 'numeric',
-                      hour: 'numeric',
-                      minute: 'numeric',
+                    Report time :{" "}
+                    {new Date(i.conditionsTime).toLocaleString("en-US", {
+                      year: "numeric",
+                      month: "numeric",
+                      day: "numeric",
+                      hour: "numeric",
+                      minute: "numeric",
                       hour12: true,
                     })}
                   </div>
@@ -201,38 +189,38 @@ function DetailPageReport({ id }: ChartProps) {
               );
             })
           ) : (
-            <div className="w-full h-full flex justify-center items-center text-2xl">
+            <div className="flex h-full w-full items-center justify-center text-2xl">
               No current reports
             </div>
           )}
         </div>
-        <div className="text-2xl h-[54px] font-bold flex items-center justify-center">
+        <div className="flex h-[54px] items-center justify-center text-2xl font-bold">
           <button
             onClick={() => setOpen(true)}
-            className="text-lg rounded-xl border border-gray-700 text-gray-700 px-2 py-2 opacity-60 hover:opacity-100"
+            className="rounded-xl border border-gray-700 px-2 py-2 text-lg text-gray-700 opacity-60 hover:opacity-100"
           >
             Report conditions
           </button>
           <div
             onClick={() => setOpen(false)}
-            className={`fixed inset-0 flex justify-center items-center transition-colors bg-black bg-opacity-50  z-50  ${
-              open ? 'visible ' : 'invisible'
+            className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50  transition-colors  ${
+              open ? "visible " : "invisible"
             }`}
           >
             <div
               onClick={(e) => e.stopPropagation()}
-              className={`w-1/3 h-2/3 bg-white  text-black relative rounded-xl`}
+              className={`relative h-2/3 w-1/3  rounded-xl bg-white text-black`}
             >
               {isLogin ? (
                 <div className="h-full">
-                  <div className="text-2xl text-center mt-3">
+                  <div className="mt-3 text-center text-2xl">
                     WAVE CONDITIONS REPORT
                   </div>
 
                   <div className=" mt-4 px-4">
                     <form
                       onSubmit={(e) => addReport(e)}
-                      className="w-full flex flex-col"
+                      className="flex w-full flex-col"
                     >
                       <LocalizationProvider dateAdapter={AdapterLuxon}>
                         <DateTimePicker
@@ -242,20 +230,20 @@ function DetailPageReport({ id }: ChartProps) {
                           onChange={(newValue) => setSelectedDateTime(newValue)}
                           // maxDate={new Date('2020-08-18')}
                         />
-                        <span className="text-xs text-red-700 ml-2">
+                        <span className="ml-2 text-xs text-red-700">
                           {dateTimeError}
                         </span>
 
                         <label
                           htmlFor="message"
-                          className="block mb-2 text-xl font-medium text-gray-900 dark:text-white mt-4"
+                          className="mb-2 mt-4 block text-xl font-medium text-gray-900 dark:text-white"
                         >
                           Report content
                         </label>
                         <textarea
                           id="message"
                           rows={8}
-                          className=" block p-2.5 w-full text-xl text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          className=" block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-xl text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                           placeholder="Write your thoughts here..."
                           value={message}
                           onChange={(e) => setMessage(e.target.value)}
@@ -263,7 +251,7 @@ function DetailPageReport({ id }: ChartProps) {
                         ></textarea>
                       </LocalizationProvider>
                       <div className="flex h-full items-center justify-center">
-                        <button className=" w-1/3 rounded-2xl bg-black text-white px-2 py-1 mt-4">
+                        <button className=" mt-4 w-1/3 rounded-2xl bg-black px-2 py-1 text-white">
                           submit
                         </button>
                       </div>
@@ -272,15 +260,15 @@ function DetailPageReport({ id }: ChartProps) {
                 </div>
               ) : (
                 <div className="h-full">
-                  <div className="text-2xl text-center mt-3">
+                  <div className="mt-3 text-center text-2xl">
                     WAVE CONDITIONS REPORT
                   </div>
-                  <div className="w-full h-3/5 flex flex-col mt-4 px-4 justify-center items-center">
+                  <div className="mt-4 flex h-3/5 w-full flex-col items-center justify-center px-4">
                     <div className="flex items-center justify-center text-lg">
                       Please log in to leave a comment.
                     </div>
-                    <Link href="/member" className="text-lg mt-4 w-1/2">
-                      <button className="w-full border-slate-400 border rounded-full px-3 py-3">
+                    <Link href="/member" className="mt-4 w-1/2 text-lg">
+                      <button className="w-full rounded-full border border-slate-400 px-3 py-3">
                         Login
                       </button>
                     </Link>
@@ -290,7 +278,7 @@ function DetailPageReport({ id }: ChartProps) {
 
               <button
                 onClick={() => setOpen(false)}
-                className="absolute right-2 top-2 text-gray-400 text-3xl hover:text-black "
+                className="absolute right-2 top-2 text-3xl text-gray-400 hover:text-black "
               >
                 <CancelRoundedIcon fontSize="inherit" />
               </button>

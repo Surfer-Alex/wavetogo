@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { devtools, persist, createJSONStorage } from 'zustand/middleware';
-import { UserInfo } from '@firebase/auth-types';
+import { devtools } from 'zustand/middleware';
+import { UserInfo } from '../types/userTypes';
 export interface Spot {
   _id: string;
   weather: {
@@ -73,29 +73,6 @@ export const useStore = create<State>((set) => ({
   },
 }));
 
-// export const userStore = create(
-//   devtools(
-//     persist(
-//       () => ({
-//         uid: '',
-//         photoURL:'',
-//       }),
-//       {
-//         name: 'user-auth', // name of the item in the storage (must be unique)
-//         storage: createJSONStorage(() => localStorage), // (optional) by default, 'localStorage' is used
-//       }
-//     )
-//   )
-// );
-
 export const userPrivateStore = create<UserPrivateState>(() => ({
   userInfo: null,
 }));
-
-// setData:()=>{
-//     set({
-//         name:'josh',
-//         price:456,
-//         cartTotal:4567,
-//     })
-// }
