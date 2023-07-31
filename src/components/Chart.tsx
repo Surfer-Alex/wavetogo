@@ -1,5 +1,5 @@
-'use client';
-import React, { useEffect, useState, useRef } from 'react';
+"use client";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -14,11 +14,11 @@ import {
   Filler,
   ChartOptions,
   ChartData,
-} from 'chart.js';
-import { Bar, Line } from 'react-chartjs-2';
-import annotationPlugin from 'chartjs-plugin-annotation';
-import 'luxon';
-import 'chartjs-adapter-luxon';
+} from "chart.js";
+import { Bar, Line } from "react-chartjs-2";
+import annotationPlugin from "chartjs-plugin-annotation";
+import "luxon";
+import "chartjs-adapter-luxon";
 
 type WaveData = {
   timestamp: number;
@@ -67,7 +67,7 @@ ChartJS.register(
   Legend,
   annotationPlugin,
   TimeScale,
-  Filler
+  Filler,
 );
 
 //過濾預測資料fn()
@@ -79,7 +79,7 @@ const getForecastData = async (
   setWaveInfo: React.Dispatch<React.SetStateAction<WaveInfo>>,
   setWindInfo: React.Dispatch<React.SetStateAction<WindInfo>>,
   setTideInfo: React.Dispatch<React.SetStateAction<TideInfo>>,
-  id: string
+  id: string,
 ) => {
   try {
     const forecastRes = await fetch(`/api/wave/?id=${id}`);
@@ -104,10 +104,10 @@ const getForecastData = async (
     setWindInfo({ windData, windTimeData });
 
     const tideTimeData = parsedForecast.tideData.data.tides.map(
-      (i: TideData) => i.timestamp
+      (i: TideData) => i.timestamp,
     );
     const tideData = parsedForecast.tideData.data.tides.map(
-      (i: TideData) => i.height
+      (i: TideData) => i.height,
     );
     setTideInfo({ tideData, tideTimeData });
   } catch (error) {
@@ -116,8 +116,8 @@ const getForecastData = async (
 };
 
 export default function Chart({ id }: ChartProps) {
-  const chartRef = useRef<ChartJS<'bar'>>(null);
-  const chart2Ref = useRef<ChartJS<'bar'>>(null);
+  const chartRef = useRef<ChartJS<"bar">>(null);
+  const chart2Ref = useRef<ChartJS<"bar">>(null);
 
   const [waveInfo, setWaveInfo] = useState<WaveInfo>(null);
   const [windInfo, setWindInfo] = useState<WindInfo>(null);
@@ -133,16 +133,16 @@ export default function Chart({ id }: ChartProps) {
     if (chart && chart2) {
       const points = chart.getElementsAtEventForMode(
         move.nativeEvent,
-        'nearest',
+        "nearest",
         { intersect: true },
-        true
+        true,
       );
       if (points[0]) {
         const dataset = points[0].datasetIndex;
         const datapoint = points[0].index;
         chart2.tooltip?.setActiveElements(
           [{ datasetIndex: dataset, index: datapoint }],
-          { x: 0, y: 0 }
+          { x: 0, y: 0 },
         );
         chart2.setActiveElements([{ datasetIndex: dataset, index: datapoint }]);
         chart2.update();
@@ -158,9 +158,9 @@ export default function Chart({ id }: ChartProps) {
     if (chart && chart2) {
       const points = chart2.getElementsAtEventForMode(
         move.nativeEvent,
-        'nearest',
+        "nearest",
         { intersect: true },
-        true
+        true,
       );
 
       if (points[0]) {
@@ -168,7 +168,7 @@ export default function Chart({ id }: ChartProps) {
         const datapoint = points[0].index;
         chart.tooltip?.setActiveElements(
           [{ datasetIndex: dataset, index: datapoint }],
-          { x: 0, y: 0 }
+          { x: 0, y: 0 },
         );
         chart.setActiveElements([{ datasetIndex: dataset, index: datapoint }]);
         chart.update();
@@ -179,24 +179,23 @@ export default function Chart({ id }: ChartProps) {
     }
   };
 
-  const waveChartData: ChartData<'bar'>= {
+  const waveChartData: ChartData<"bar"> = {
     labels: waveInfo?.waveTimeData.map((i) => new Date(i * 1000)),
     datasets: [
-      { 
-        label: '最大浪高',
-        data: waveInfo?.waveData||[],
-        backgroundColor: 'rgba(0, 108, 250, 0.5)',
+      {
+        label: "最大浪高",
+        data: waveInfo?.waveData || [],
+        backgroundColor: "rgba(0, 108, 250, 0.5)",
       },
     ],
   };
-  const windChartData: ChartData<'bar'> = {
+  const windChartData: ChartData<"bar"> = {
     labels: windInfo?.windTimeData.map((i) => new Date(i * 1000)),
     datasets: [
       {
-        
-        label: '風速',
-        data: windInfo?.windData||[],
-        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        label: "風速",
+        data: windInfo?.windData || [],
+        backgroundColor: "rgba(255, 99, 132, 0.5)",
       },
     ],
   };
@@ -205,31 +204,31 @@ export default function Chart({ id }: ChartProps) {
   const down = (ctx: any, value: string) =>
     ctx.p0.parsed.y > ctx.p1.parsed.y ? value : undefined;
 
-  const tidesData: ChartData<'line'> = {
+  const tidesData: ChartData<"line"> = {
     labels: tideInfo?.tideTimeData.map((i) => new Date(i * 1000)),
     datasets: [
       {
-        label: '潮汐高度',
+        label: "潮汐高度",
         data: tideInfo?.tideData ?? [],
-        backgroundColor: '#000000',
+        backgroundColor: "#000000",
         fill: true,
         segment: {
           // borderColor: (ctx) => up(ctx, '#a1cfff') || down(ctx, '#863031'),
-          borderColor:'transparent',
-          backgroundColor: (ctx) => up(ctx, '#00ff155e') || down(ctx, '#135914'),
+          borderColor: "transparent",
+          backgroundColor: (ctx) =>
+            up(ctx, "#00ff155e") || down(ctx, "#135914"),
         },
       },
     ],
   };
-  const options: ChartOptions<'bar'> = {
-    maintainAspectRatio:false,
-    
+  const options: ChartOptions<"bar"> = {
+    maintainAspectRatio: false,
+
     scales: {
-      
       x: {
-        type: 'time',
+        type: "time",
         time: {
-          unit: 'hour',
+          unit: "hour",
         },
         grid: {
           display: false,
@@ -239,50 +238,48 @@ export default function Chart({ id }: ChartProps) {
           display: false,
         },
         ticks: {
-          
           stepSize: 3,
           callback: (value) => {
             const date = new Date(value);
             const hour = date.getHours();
-            
+
             return hour;
-          }
+          },
         },
       },
       y: {
         beginAtZero: true,
         grid: {
-          
           tickLength: 0,
-        },suggestedMax: 2,
+        },
+        suggestedMax: 2,
       },
       x2: {
-        position: 'top',
-        type: 'time',
+        position: "top",
+        type: "time",
         time: {
-          unit: 'day',
-          round: 'day',
+          unit: "day",
+          round: "day",
         },
         grid: {
-          tickColor: 'black',
+          tickColor: "black",
           // color: 'black',
           tickLength: 0,
         },
         ticks: {
-          source: 'labels',
+          source: "labels",
         },
       },
     },
     responsive: true,
 
     plugins: {
-      
       legend: {
         display: false,
       },
       title: {
         display: true,
-        text: "Waves Forecast"
+        text: "Waves Forecast",
       },
       tooltip: {
         callbacks: {
@@ -291,7 +288,7 @@ export default function Chart({ id }: ChartProps) {
             let timeString;
             if (waveInfo && waveInfo.waveTimeData) {
               timeString = new Date(
-                waveInfo.waveTimeData[index] * 1000
+                waveInfo.waveTimeData[index] * 1000,
               ).toTimeString();
             }
             return timeString;
@@ -301,30 +298,30 @@ export default function Chart({ id }: ChartProps) {
       annotation: {
         annotations: {
           line1: {
-            type: 'line',
+            type: "line",
             xMin: new Date().toISOString(),
             xMax: new Date().toISOString(),
             label: {
               display: true,
               content: (ctx) =>
-                `NOW:${new Date().toLocaleTimeString('en-US', {
-                  hour: '2-digit',
-                  minute: '2-digit',
+                `NOW:${new Date().toLocaleTimeString("en-US", {
+                  hour: "2-digit",
+                  minute: "2-digit",
                 })} 浪高:${closestValue(ctx)}m `,
-              position: 'start',
+              position: "start",
             },
           },
         },
       },
     },
   };
-  const windOptions: ChartOptions<'bar'> = {
-    maintainAspectRatio:false,
+  const windOptions: ChartOptions<"bar"> = {
+    maintainAspectRatio: false,
     scales: {
       x: {
-        type: 'time',
+        type: "time",
         time: {
-          unit: 'hour',
+          unit: "hour",
         },
         ticks: {
           stepSize: 3,
@@ -332,7 +329,7 @@ export default function Chart({ id }: ChartProps) {
             const date = new Date(value);
             const hour = date.getHours();
             return hour;
-          }
+          },
         },
         grid: {
           display: false,
@@ -342,24 +339,23 @@ export default function Chart({ id }: ChartProps) {
       y: {
         beginAtZero: true,
         grid: {
-          
           tickLength: 0,
         },
       },
       x2: {
-        position: 'top',
-        type: 'time',
+        position: "top",
+        type: "time",
         time: {
-          unit: 'day',
-          round: 'day',
+          unit: "day",
+          round: "day",
         },
         grid: {
-          tickColor: 'black',
+          tickColor: "black",
           // color: 'black',
           tickLength: 0,
         },
         ticks: {
-          display:false,
+          display: false,
           // source: 'labels',
         },
       },
@@ -372,7 +368,7 @@ export default function Chart({ id }: ChartProps) {
       },
       title: {
         display: true,
-        text: "Winds Forecast"
+        text: "Winds Forecast",
       },
       tooltip: {
         callbacks: {
@@ -381,7 +377,7 @@ export default function Chart({ id }: ChartProps) {
             let timeString;
             if (windInfo && windInfo.windTimeData) {
               timeString = new Date(
-                windInfo.windTimeData[index] * 1000
+                windInfo.windTimeData[index] * 1000,
               ).toTimeString();
             }
             return timeString;
@@ -391,17 +387,17 @@ export default function Chart({ id }: ChartProps) {
       annotation: {
         annotations: {
           line1: {
-            type: 'line',
+            type: "line",
             xMin: new Date().toISOString(),
             xMax: new Date().toISOString(),
             label: {
               display: true,
               content: (ctx) =>
-                `NOW:${new Date().toLocaleTimeString('en-US', {
-                  hour: '2-digit',
-                  minute: '2-digit',
+                `NOW:${new Date().toLocaleTimeString("en-US", {
+                  hour: "2-digit",
+                  minute: "2-digit",
                 })} 風速:${closestValue(ctx)?.toFixed(2)} kph`,
-              position: 'start',
+              position: "start",
             },
           },
         },
@@ -418,50 +414,50 @@ export default function Chart({ id }: ChartProps) {
         const currTime = new Date(curr);
         const currDiff = Math.abs(currentTime.getTime() - currTime.getTime());
         const accDiff = Math.abs(
-          currentTime.getTime() - new Date(labels[acc]).getTime()
+          currentTime.getTime() - new Date(labels[acc]).getTime(),
         );
         return currDiff < accDiff ? index : acc;
       },
-      0
+      0,
     );
     return dataset.data[closestIndex];
   }
-  const tideOptions: ChartOptions<'line'> = {
-    maintainAspectRatio:false,
-    
+  const tideOptions: ChartOptions<"line"> = {
+    maintainAspectRatio: false,
+
     scales: {
       x: {
-        type: 'time',
+        type: "time",
         time: {
-          unit: 'hour',
+          unit: "hour",
         },
         grid: {
           display: false,
           tickLength: 0,
-        },ticks: {
+        },
+        ticks: {
           stepSize: 3,
           callback: (value) => {
             const date = new Date(value);
             const hour = date.getHours();
             return hour;
-          }
+          },
         },
       },
       y: {
         beginAtZero: true,
         grid: {
-          
           tickLength: 0,
         },
       },
       x2: {
-        position: 'top',
-        type: 'time',
+        position: "top",
+        type: "time",
         time: {
-          unit: 'day',
+          unit: "day",
         },
         grid: {
-          tickColor: 'black',
+          tickColor: "black",
 
           // color: 'black',
         },
@@ -470,31 +466,31 @@ export default function Chart({ id }: ChartProps) {
     responsive: true,
     plugins: {
       tooltip: {
-        mode: 'index',
+        mode: "index",
         intersect: false,
-    },
+      },
       legend: {
-        display:false
+        display: false,
         // position: 'top' as const,
       },
       title: {
-        display:true,
-        text: 'Tides Forecast',
+        display: true,
+        text: "Tides Forecast",
       },
       annotation: {
         annotations: {
           line1: {
-            type: 'line',
+            type: "line",
             xMin: new Date().toISOString(),
             xMax: new Date().toISOString(),
             label: {
               display: true,
               content: (ctx) =>
-                `NOW:${new Date().toLocaleTimeString('en-US', {
-                  hour: '2-digit',
-                  minute: '2-digit',
+                `NOW:${new Date().toLocaleTimeString("en-US", {
+                  hour: "2-digit",
+                  minute: "2-digit",
                 })} 潮高:${closestValue(ctx)}m`,
-              position: 'start',
+              position: "start",
             },
           },
         },
@@ -503,8 +499,8 @@ export default function Chart({ id }: ChartProps) {
   };
 
   return (
-    <div className='max-w-[1280px] w-full'>
-      <div className="h-[300px] w-full px-5 flex justify-center">
+    <div className="w-full max-w-[1280px] px-5 2xl:px-0">
+      <div className="flex h-[300px] w-full justify-center px-5">
         <Bar
           options={options}
           data={waveChartData}
@@ -512,7 +508,7 @@ export default function Chart({ id }: ChartProps) {
           onMouseMove={hover1}
         />
       </div>
-      <div className="h-[300px] w-full px-5 flex justify-center">
+      <div className="flex h-[300px] w-full justify-center px-5">
         <Bar
           options={windOptions}
           data={windChartData}
@@ -520,7 +516,7 @@ export default function Chart({ id }: ChartProps) {
           onMouseMove={hover2}
         />
       </div>
-      <div className="h-[300px] w-full px-5 flex justify-center">
+      <div className="flex h-[300px] w-full justify-center px-5">
         <Line options={tideOptions} data={tidesData} />
       </div>
     </div>

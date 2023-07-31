@@ -1,4 +1,4 @@
-import { db } from '@/firebase';
+import { db } from "@/firebase";
 import {
   collection,
   getDocs,
@@ -7,16 +7,16 @@ import {
   addDoc,
   writeBatch,
   doc,
-} from 'firebase/firestore';
-import { NextResponse } from 'next/server';
+} from "firebase/firestore";
+import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const id = searchParams.get('id');
-    const ref = collection(db, 'surfSpots');
+    const id = searchParams.get("id");
+    const ref = collection(db, "surfSpots");
     if (id) {
-      const q = query(ref, where('id', '==', id));
+      const q = query(ref, where("id", "==", id));
       const querySnapshot = await getDocs(q);
       const docs = querySnapshot.docs.map((doc) => doc.data());
 
@@ -24,7 +24,7 @@ export async function GET(req: Request) {
     } else {
       const querySnapshot = await getDocs(ref);
       const docs = querySnapshot.docs.map((doc) => doc.data());
-      // console.log(docs);
+
       return NextResponse.json(docs);
     }
   } catch (error) {

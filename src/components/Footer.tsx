@@ -34,8 +34,18 @@ const Footer = () => {
         </div>
       </Link>
 
-      <button className="ml-auto self-center font-medium">GITHUB</button>
-      <div className=" mx-5 self-center font-medium sm:mx-10">LINKEDIN</div>
+      <Link
+        href="https://github.com/Surfer-Alex/wavetogo"
+        className="ml-auto self-center font-medium"
+      >
+        <button>GITHUB</button>
+      </Link>
+      <Link
+        href="https://www.linkedin.com/in/alex-chen-surfer/"
+        className="mx-5 self-center font-medium sm:mx-10"
+      >
+        <button>LINKEDIN</button>
+      </Link>
     </div>
   );
 };

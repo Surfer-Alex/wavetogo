@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useStore, userPrivateStore } from "@/store";
 import FlagCircleIcon from "@mui/icons-material/FlagCircle";
 import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
-
+import userIcon from "../../public/images/icons8-male-user-96.png";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
 import { DateTimePicker } from "@mui/x-date-pickers";
@@ -46,8 +46,6 @@ function DetailPageReport({ id }: ChartProps) {
   const [reports, setReports] = useState<Report[]>([]);
   const [dateTimeError, setDateTimeError] = useState<string>("");
 
-  // console.log(message);
-
   const { spotData } = useStore();
   const getUserInfo = userPrivateStore((state) => state.userInfo);
 
@@ -59,7 +57,7 @@ function DetailPageReport({ id }: ChartProps) {
     if (getUserInfo && (getUserInfo.uid as string)?.length > 0) {
       setIsLogin(true);
     }
-  }, [getUserInfo]);
+  }, [getUserInfo, isLogin]);
 
   const q = query(collection(db, "surfSpots"), where("id", "==", id));
 
@@ -127,8 +125,8 @@ function DetailPageReport({ id }: ChartProps) {
   }
 
   return (
-    <div className="flex h-[400px] w-full ">
-      <div className="relative h-full w-1/2">
+    <div className="flex w-full flex-col lg:h-[400px] lg:flex-row ">
+      <div className="relative h-full w-full lg:w-1/2">
         <Image
           priority={true}
           width={1200}
@@ -143,34 +141,34 @@ function DetailPageReport({ id }: ChartProps) {
         </div>
       </div>
 
-      <div className="flex w-1/2 flex-col bg-slate-200">
-        <div className="mt-4 flex w-full justify-center text-2xl font-bold">
+      <div className="flex w-full flex-col bg-slate-200 lg:w-1/2">
+        <div className="mb-2 mt-4 flex w-full justify-center text-2xl font-bold">
           <div className="text-4xl">
             <FlagCircleIcon fontSize="inherit" />
           </div>
           <div className="ml-1 flex items-center">WAVE REPORT</div>
         </div>
-        <div className="h-[280px] w-full overflow-auto px-12 font-bold ">
+        <div className="no-scrollbar h-[280px] w-full overflow-auto px-4 font-bold sm:px-12 ">
           {reports && reports.length > 0 ? (
             reports.map((i, idx) => {
               return (
                 <div
                   key={idx}
-                  className="mt-4 flex flex-col rounded-2xl bg-white px-2 py-2 shadow-[5px_5px_0px_0px_rgba(110,116,139)]"
+                  className="my-4 flex flex-col rounded-2xl bg-white p-2 shadow-[5px_5px_0px_0px_rgba(110,116,139)]"
                 >
                   <div className="flex">
-                    <div className="flex items-center">
+                    <div className="flex w-2/5 items-center">
                       <Image
-                        src={i.userPhoto}
+                        src={i.userPhoto || userIcon}
                         alt={"userPhoto"}
                         width={30}
                         height={30}
                         quality={100}
                         className="rounded-full"
                       />
-                      <div className="ml-2">{i.displayName}</div>
+                      <div className="ml-2 w-1/2">{i.displayName}</div>
                     </div>
-                    <div className="ml-auto flex w-5/6 items-center text-base font-normal">
+                    <div className="ml-auto flex w-3/5 items-center text-base font-normal">
                       {i.content}
                     </div>
                   </div>
@@ -209,7 +207,7 @@ function DetailPageReport({ id }: ChartProps) {
           >
             <div
               onClick={(e) => e.stopPropagation()}
-              className={`relative h-2/3 w-1/3  rounded-xl bg-white text-black`}
+              className={`relative h-2/3 w-full rounded-xl bg-white  text-black sm:w-2/3 xl:w-1/3`}
             >
               {isLogin ? (
                 <div className="h-full">
@@ -291,5 +289,3 @@ function DetailPageReport({ id }: ChartProps) {
 }
 
 export default DetailPageReport;
-
-// onChange={evt=>handleInputChange(evt)}/>

@@ -1,34 +1,21 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# WAVE TO GO
 
-## Getting Started
+Wave To Go is a surf forecasting website that integrates diverse wave prediction information and map data visualization, solving the problem of surfers needing to understand too much complex information before planning a surf trip.
 
-First, run the development server:
+## Demo
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+https://wavetogo.vercel.app/
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Implemented Taiwan surf spots on a map using React Leaflet and Mapbox API, providing faster filtering of wave forecast information.
+- Developed the favorite surf spot collection function that allows quick access to current wave conditions and weekly wave height trends, using Surfline API for prediction data.
+- Improved the display of weekly wave forecast trend charts, wind speed, and tide charts on the homepage and surf spot page using React-chartjs. This enhances the understanding of forecasting data.
+- Transformed data into user-friendly predictions on wave spot dashboard using data visualization techniques, provided wind maps, equipment recommendations, and tide changes.
+- Integrated with Firebase Cloud Firestore to provide real-time wave condition reporting, helping surfers collect more wave information.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Built with
 
-## Learn More
+**Client:** React, Zustand, Tailwind CSS
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+**Server:** Firebase Cloud Firestore, Firebase Authentication, Vercel

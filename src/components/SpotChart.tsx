@@ -217,7 +217,6 @@ function SpotChart({ randomSpots }: SpotChartProps) {
   const labels = chartData[0]?.data.wave
     .filter((_, index) => index % 24 === 0)
     .map((i) => i.timestamp);
-  // console.log(conditionsData);
 
   if (chartData.length === 0 || conditionsData.length === 0) {
     return (
