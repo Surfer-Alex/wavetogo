@@ -8,11 +8,9 @@
   <p align="center">
     Wave To Go is a surf forecasting website that integrates diverse wave prediction information and map data visualization, solving the problem of surfers needing to understand too much complex information before planning a surf trip.
     <br />
-    <a href="https://github.com/Surfer-Alex/wavetogo"><strong>Explore the docs »</strong></a>
+    <a href="https://wavetogo.vercel.app/"><strong>View Demo »</strong></a>
     <br />
     <br />
-    <a href="https://wavetogo.vercel.app/">View Demo</a>
-    ·
     <a href="https://github.com/Surfer-Alex/wavetogo/issues">Report Bug</a>
     ·
     <a href="https://github.com/Surfer-Alex/wavetogo/issues">Request Feature</a>
@@ -61,3 +59,8 @@
 [tailwind-url]: https://tailwindcss.com/
 [vercel]:https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white
 [vercel-url]:https://vercel.com/
+
+## HomePage
+
+![screencapture-wavetogo-vercel-app-2023-07-31-17_11_08](https://github.com/Surfer-Alex/wavetogo/assets/126334654/d9c637a8-74af-42e3-803d-f180c5ea0ecd)
+###
