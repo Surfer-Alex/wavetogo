@@ -13,9 +13,6 @@ function Page() {
   useEffect(() => {
     fetchFavorites();
   }, [spotData, uid]);
-  useEffect(() => {
-    console.log(spots);
-  }, [spots]);
 
   const fetchFavorites = async () => {
     try {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -192,8 +192,6 @@ function SpotChart({ randomSpots }: SpotChartProps) {
     fetchData();
   }, [randomSpots]);
 
-  // console.log(chartData[0]);
-
   const fetchData = async () => {
     const promises = randomSpots.map((spot) =>
       fetch(`/api/wave/?id=${spot._id}&type=wave`),
@@ -236,7 +234,7 @@ function SpotChart({ randomSpots }: SpotChartProps) {
   return (
     <div className="mt-6 flex justify-center">
       <div className=" flex  w-full">
-        <div className="flex w-4/5 flex-col lg:w-1/5 ">
+        <div className="flex w-2/5 flex-col lg:w-1/5 ">
           <div className=" flex h-[50px] w-full items-center justify-center text-2xl font-bold"></div>
           {randomSpots.map((i, idx) => (
             <div

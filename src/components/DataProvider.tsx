@@ -1,7 +1,7 @@
 "use client";
 import { useStore } from "@/store";
 import { useEffect } from "react";
-import { useAuthState, useIdToken } from "react-firebase-hooks/auth";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { db, auth } from "@/firebase";
 import { UserInfo } from "../../types/userTypes";
 import { userPrivateStore } from "@/store";
@@ -27,7 +27,7 @@ const DataProvider = () => {
         const { uid } = user.providerData[0];
 
         const newUser: UserInfo = user.providerData[0];
-        await setDoc(doc(db, "users", uid), newUser);
+        await setDoc(doc(db, "users", uid), newUser, { merge: true });
 
         userPrivateStore.setState({ userInfo: newUser });
       } else {
