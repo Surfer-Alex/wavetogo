@@ -65,7 +65,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ setOpen, open }) => {
               onChange={(e) => handleSearch(e)}
               type="text"
               className={`w-full rounded-t-xl border-b border-slate-400  py-4 pl-16 text-black focus:outline-none`}
-              placeholder="What you looking for?"
+              placeholder="Search"
               value={inputValue}
             />
           </div>

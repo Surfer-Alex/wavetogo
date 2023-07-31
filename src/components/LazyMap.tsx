@@ -234,7 +234,7 @@ const LazyMap = () => {
             <div className="flex h-24 w-1/2 flex-col  px-8 lg:mt-4 lg:h-[100px]">
               <label
                 htmlFor="level"
-                className="mb-2 block text-lg font-bold text-gray-900 dark:text-gray-400"
+                className="mb-2 mt-2 block text-lg font-bold text-gray-900 dark:text-gray-400"
               >
                 Level
               </label>
@@ -258,7 +258,7 @@ const LazyMap = () => {
             <div className="flex h-24 w-1/2 flex-col  px-8 lg:mt-4 lg:h-[100px] ">
               <label
                 htmlFor="region"
-                className="mb-2 block  text-lg font-bold text-gray-900 dark:text-gray-400"
+                className="mb-2 mt-2 block text-lg font-bold text-gray-900 dark:text-gray-400"
               >
                 Region
               </label>

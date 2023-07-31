@@ -1,5 +1,13 @@
 import { db } from "@/firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  addDoc,
+  writeBatch,
+  doc,
+} from "firebase/firestore";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
@@ -16,9 +24,17 @@ export async function GET(req: Request) {
     } else {
       const querySnapshot = await getDocs(ref);
       const docs = querySnapshot.docs.map((doc) => doc.data());
-
+      // console.log(docs);
       return NextResponse.json(docs);
     }
+  } catch (error) {
+    return new NextResponse(error as undefined);
+  }
+}
+
+export async function POST() {
+  try {
+    return NextResponse.json(200);
   } catch (error) {
     return new NextResponse(error as undefined);
   }
