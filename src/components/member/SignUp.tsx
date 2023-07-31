@@ -66,12 +66,7 @@ function SignUp({ setIsUserLoggedIn }: Props) {
     if (auth.currentUser != null) {
       await auth.currentUser.reload();
     }
-    if (success) {
-      console.log("成功update");
-    }
-    if (updateError) {
-      console.log(updateError.message);
-    }
+
     enqueueSnackbar("Sign Up successfully !", { variant });
     setSendProfile(true);
   };
