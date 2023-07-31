@@ -1,15 +1,15 @@
-import { useState } from 'react';
-import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
-import { db, auth } from '@/firebase';
-import { VariantType, useSnackbar } from 'notistack';
-import { useRouter } from 'next/navigation';
+import { useState } from "react";
+import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
+import { db, auth } from "@/firebase";
+import { VariantType, useSnackbar } from "notistack";
+import { useRouter } from "next/navigation";
 type Props = {
   setIsUserLoggedIn: (value: boolean) => void;
 };
 const SignInWithNative = ({ setIsUserLoggedIn }: Props) => {
   const [signInForm, setSignInForm] = useState({
-    email: '',
-    password: '',
+    email: "alex@gmail.com",
+    password: "Alex123456",
   });
   const [signInWithEmailAndPassword, user, loading, fbError] =
     useSignInWithEmailAndPassword(auth);
@@ -18,14 +18,14 @@ const SignInWithNative = ({ setIsUserLoggedIn }: Props) => {
 
   const handleSubmit = (
     e: React.FormEvent<HTMLFormElement>,
-    variant: VariantType
+    variant: VariantType,
   ) => {
     e.preventDefault();
 
     signInWithEmailAndPassword(signInForm.email, signInForm.password);
     setIsUserLoggedIn(true);
-    router.push('/');
-    enqueueSnackbar('Login successfully !', { variant });
+    router.push("/");
+    enqueueSnackbar("Login successfully !", { variant });
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,8 +36,8 @@ const SignInWithNative = ({ setIsUserLoggedIn }: Props) => {
   };
   return (
     <form
-      onSubmit={(e) => handleSubmit(e, 'success')}
-      className="flex flex-col mt-4 w-full"
+      onSubmit={(e) => handleSubmit(e, "success")}
+      className="mt-4 flex w-full flex-col"
     >
       <input
         required
@@ -45,7 +45,8 @@ const SignInWithNative = ({ setIsUserLoggedIn }: Props) => {
         placeholder="email"
         type="Your email..."
         onChange={handleChange}
-        className="mt-3 border border-slate-400 rounded-xl px-2 py-2"
+        value={"alex@gmail.com"}
+        className="mt-3 rounded-xl border border-slate-400 px-2 py-2"
       />
       <input
         required
@@ -53,14 +54,15 @@ const SignInWithNative = ({ setIsUserLoggedIn }: Props) => {
         placeholder="password"
         type="Choose a strong password..."
         onChange={handleChange}
-        className="mt-3 border border-slate-400 rounded-xl px-2 py-2"
+        value={"Alex123456"}
+        className="mt-3 rounded-xl border border-slate-400 px-2 py-2"
       />
 
       {fbError && <div>fbError.message</div>}
 
       <button
         type="submit"
-        className="mt-6 bg-black text-white rounded-full px-2 py-2"
+        className="mt-6 rounded-full bg-black px-2 py-2 text-white"
       >
         Sign In
       </button>

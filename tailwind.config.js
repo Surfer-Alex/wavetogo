@@ -16,11 +16,10 @@ module.exports = {
         "16%": "16%",
         "32%": "32%",
         "45%": "45%",
+        "48%": "48%",
         negativeGap: "calc((100% - 24px)/2)",
       },
-      // backgroundImage: (theme) => ({
-      //   waves: "url('https://source.unsplash.com/ChOHCv42flI')",
-      // }),
+
       height: {
         negativeHeader: "calc(100vh - 80px)",
         negativeHeaderFooter: "calc(100vh - 160px)",

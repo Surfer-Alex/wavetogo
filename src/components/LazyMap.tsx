@@ -128,9 +128,6 @@ const LazyMap = () => {
   useEffect(() => {
     setBounds(map?.getBounds());
   }, [map]);
-  useEffect(() => {
-    console.log(favorites);
-  }, [favorites]);
 
   const flyToSpot = (
     event: React.MouseEvent,
@@ -189,8 +186,7 @@ const LazyMap = () => {
       const data = await fetch(`/api/firebase/favorites/?uid=${uid}&id=${id}`, {
         method: "POST",
       });
-      const parsedData = await data.json();
-      console.log(parsedData);
+
       if (favorites) {
         setFavorites((prevFavorites) => [...prevFavorites, id]);
       } else {
@@ -209,7 +205,6 @@ const LazyMap = () => {
       const data = await fetch(`/api/firebase/favorites/?uid=${uid}&id=${id}`, {
         method: "DELETE",
       });
-      const parsedData = await data.json();
 
       setFavorites((prevFavorites) =>
         prevFavorites.filter((fav) => fav !== id),
@@ -250,9 +245,6 @@ const LazyMap = () => {
                 id="level"
                 className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
               >
-                {/* <option selected value="LEVEL" disabled>
-                LEVEL
-              </option> */}
                 <option value="">ALL</option>
                 {Levels.map((level, idx) => {
                   return (
@@ -325,12 +317,12 @@ const LazyMap = () => {
                         alt="spot static map with marker"
                         src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v11/static/pin-l+f44546(${i.lon},${i.lat})/${i.lon},${i.lat},15,0/1000x500?access_token=${process.env.NEXT_PUBLIC_MAPBOX_API_KEY}&logo=false`}
                       />
-                      <div className="">
-                        <div className="ml-6 mt-3 flex text-xl font-bold text-gray-600 lg:mt-1">
+                      <div className="flex-grow">
+                        <div className="ml-6 mt-3 flex items-center text-xl font-bold text-gray-600 lg:mt-1">
                           {i.name}
                           {favorites?.some((fav) => fav === i._id) ? (
                             <button
-                              className="ml-2 text-2xl text-red-600"
+                              className="ml-auto mr-2 text-4xl text-red-600 md:text-2xl"
                               onClick={(event) =>
                                 handleRemoveFromFavorites(event, i._id)
                               }
@@ -339,7 +331,7 @@ const LazyMap = () => {
                             </button>
                           ) : (
                             <button
-                              className="ml-2 text-2xl"
+                              className="ml-auto mr-2 text-4xl md:text-2xl"
                               onClick={(event) =>
                                 handleAddToFavorites(event, i._id)
                               }
