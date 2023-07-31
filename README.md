@@ -19,3 +19,12 @@ https://wavetogo.vercel.app/
 **Client:** React, Zustand, Tailwind CSS
 
 **Server:** Firebase Cloud Firestore, Firebase Authentication, Vercel
+
+* [![Next][Next.js]][Next-url]
+* [![React][React.js]][React-url]
+* [![Vue][Vue.js]][Vue-url]
+* [![Angular][Angular.io]][Angular-url]
+* [![Svelte][Svelte.dev]][Svelte-url]
+* [![Laravel][Laravel.com]][Laravel-url]
+* [![Bootstrap][Bootstrap.com]][Bootstrap-url]
+* [![JQuery][JQuery.com]][JQuery-url]
