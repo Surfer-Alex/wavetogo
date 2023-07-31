@@ -1,6 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css?family=Orbitron');
+@import url('https://fonts.googleapis.com/css?family=Bebas+Neue');
+@import url('https://fonts.googleapis.com/css2?family=Permanent+Marker');
+
 
 :root {
   --foreground-rgb: 0, 0, 0;
@@ -17,11 +21,27 @@
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  height: 100%;
 }
+
+@layer utilities {
+  /* Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  .mask-waves {
+    --mask:
+    radial-gradient(15.65em at 50% calc(100% - 21.00em),#000 99%,#00000000 101%) calc(50% - 14em) 0/28em 100%,
+    radial-gradient(15.65em at 50% calc(100% + 14.00em),#0000 99%,#000000 101%) 50% calc(100% - 7em)/28em 100% repeat-x;
+    
+  -webkit-mask: var(--mask);
+          mask: var(--mask);
+  }
+}
+
+
