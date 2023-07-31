@@ -229,9 +229,9 @@ const LazyMap = () => {
   return (
     <>
       <div className="relative flex h-negativeHeader w-screen  flex-col-reverse font-bold lg:flex-row">
-        <div className="absolute bottom-0 z-10 flex h-2/6 w-full flex-col bg-transparent lg:relative lg:h-full lg:w-1/3 lg:bg-[#ffffff]  xl:w-1/2">
-          <div className="relative  hidden border-b-2 border-slate-400">
-            <div className="mt-4 flex h-[100px] w-1/2 flex-col   px-8">
+        <div className=" absolute bottom-6 z-10 flex  w-screen flex-col bg-transparent lg:relative lg:h-full lg:w-1/3 lg:bg-[#ffffff]  xl:w-1/2">
+          <div className="relative flex w-full border-slate-400  sm:w-1/2 lg:flex lg:w-full lg:border-b-2">
+            <div className="flex h-24 w-1/2 flex-col  px-8 lg:mt-4 lg:h-[100px]">
               <label
                 htmlFor="level"
                 className="mb-2 block text-lg font-bold text-gray-900 dark:text-gray-400"
@@ -255,7 +255,7 @@ const LazyMap = () => {
                 })}
               </select>
             </div>
-            <div className="mt-4 flex h-[100px] w-1/2 flex-col px-8 ">
+            <div className="flex h-24 w-1/2 flex-col  px-8 lg:mt-4 lg:h-[100px] ">
               <label
                 htmlFor="region"
                 className="mb-2 block  text-lg font-bold text-gray-900 dark:text-gray-400"
@@ -280,14 +280,14 @@ const LazyMap = () => {
             </div>
             <span
               style={{ transform: `translateX(${completion - 100}%)` }}
-              className=" absolute bottom-0 h-1 w-full rounded-xl bg-slate-400 transition-transform duration-500 ease-in-out"
+              className="bottom-0 hidden h-1 w-full rounded-xl bg-slate-400 transition-transform duration-500 ease-in-out lg:absolute lg:inline"
             />
           </div>
 
           <motion.div
             layout
             ref={ref}
-            className="no-scrollbar flex w-full gap-6 overflow-x-auto p-10 lg:flex-wrap lg:overflow-y-auto"
+            className="no-scrollbar mx-4 flex gap-6 overflow-x-auto rounded-2xl lg:mx-0 lg:flex-wrap lg:overflow-y-auto lg:rounded-none lg:p-10"
           >
             <AnimatePresence>
               {isSpotLoading && <CardSkeleton cards={35} />}
@@ -301,7 +301,7 @@ const LazyMap = () => {
                     animate={{ opacity: 1 }}
                     initial={{ opacity: 0 }}
                     exit={{ opacity: 0 }}
-                    className={` relative h-[140px] transform rounded-2xl bg-slate-100 shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,_rgba(0,0,0,0.3)_0px_3px_7px_-3px]  transition  duration-200  hover:z-10 hover:-translate-y-1 hover:scale-105 hover:shadow-[5px_5px_0px_0px_rgba(243,203,172)]   lg:h-[280px] lg:w-full  xl:w-negativeGap`}
+                    className={` relative  h-[140px] transform rounded-2xl bg-slate-100 shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,_rgba(0,0,0,0.3)_0px_3px_7px_-3px]  hover:z-10  lg:h-[280px]  lg:w-full lg:transition lg:duration-200 lg:hover:-translate-y-1   lg:hover:scale-105 lg:hover:shadow-[5px_5px_0px_0px_rgba(243,203,172)]  xl:w-negativeGap`}
                     key={idx}
                   >
                     <Link
