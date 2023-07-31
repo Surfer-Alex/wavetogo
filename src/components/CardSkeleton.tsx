@@ -12,9 +12,8 @@ const CardSkeleton = ({ cards }: CardSkeletonProps) => {
       >
         <div className="flex h-full w-[400px] lg:w-full lg:flex-col">
           <Skeleton
-            className="h-[140px] w-2/5 rounded-l-xl lg:h-[162px] lg:w-full lg:rounded-t-2xl"
+            className="h-full w-2/5 rounded-l-xl lg:h-1/2 lg:w-full lg:rounded-t-2xl"
             variant="rounded"
-            // height={162}
           />
           <div className="flex-grow">
             <div className="ml-6 mt-3 flex items-center lg:mt-6  lg:w-full ">
@@ -33,7 +32,7 @@ const CardSkeleton = ({ cards }: CardSkeletonProps) => {
               variant="text"
               sx={{ fontSize: "2rem" }}
             />
-            <div className="ml-6 mt-1 flex">
+            <div className="mb-1 ml-6 mt-4 flex">
               <Skeleton
                 className="w-1/3 font-bold text-gray-600"
                 variant="text"

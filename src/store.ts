@@ -1,6 +1,6 @@
-import { create } from 'zustand';
-import { devtools } from 'zustand/middleware';
-import { UserInfo } from '../types/userTypes';
+import { create } from "zustand";
+import { devtools } from "zustand/middleware";
+import { UserInfo } from "../types/userTypes";
 export interface Spot {
   _id: string;
   weather: {
