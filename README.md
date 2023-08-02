@@ -60,7 +60,3 @@
 [vercel]:https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white
 [vercel-url]:https://vercel.com/
 
-## HomePage
-
-![screencapture-wavetogo-vercel-app-2023-07-31-17_11_08](https://github.com/Surfer-Alex/wavetogo/assets/126334654/d9c637a8-74af-42e3-803d-f180c5ea0ecd)
-###
