@@ -70,11 +70,6 @@ ChartJS.register(
   Filler,
 );
 
-//過濾預測資料fn()
-//   function filterByIndex<T>(arr: T[], divisor: number): { timestamp: number, speed: number}[]{
-//     return arr.filter((_, index) => index % divisor === 0);
-//   }
-
 const getForecastData = async (
   setWaveInfo: React.Dispatch<React.SetStateAction<WaveInfo>>,
   setWindInfo: React.Dispatch<React.SetStateAction<WindInfo>>,
@@ -263,7 +258,6 @@ export default function Chart({ id }: ChartProps) {
         },
         grid: {
           tickColor: "black",
-          // color: 'black',
           tickLength: 0,
         },
         ticks: {
@@ -351,12 +345,10 @@ export default function Chart({ id }: ChartProps) {
         },
         grid: {
           tickColor: "black",
-          // color: 'black',
           tickLength: 0,
         },
         ticks: {
           display: false,
-          // source: 'labels',
         },
       },
     },
@@ -404,7 +396,7 @@ export default function Chart({ id }: ChartProps) {
       },
     },
   };
-  //fix this types
+
   function closestValue(ctx: any) {
     const dataset = ctx.chart.data.datasets[0];
     const labels = ctx.chart.data.labels;
@@ -458,8 +450,6 @@ export default function Chart({ id }: ChartProps) {
         },
         grid: {
           tickColor: "black",
-
-          // color: 'black',
         },
       },
     },
@@ -471,7 +461,6 @@ export default function Chart({ id }: ChartProps) {
       },
       legend: {
         display: false,
-        // position: 'top' as const,
       },
       title: {
         display: true,
