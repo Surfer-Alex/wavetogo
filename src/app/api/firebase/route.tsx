@@ -24,7 +24,6 @@ export async function GET(req: Request) {
     } else {
       const querySnapshot = await getDocs(ref);
       const docs = querySnapshot.docs.map((doc) => doc.data());
-      // console.log(docs);
       return NextResponse.json(docs);
     }
   } catch (error) {

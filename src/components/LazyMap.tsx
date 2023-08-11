@@ -108,7 +108,6 @@ const getSpotData = async (
 };
 
 const LazyMap = () => {
-  // const [center, setCenter] = useState({ lat: 23.553118, lng: 121.0211024 });
   const [spotInfo, setSpotInfo] = useState<SpotInfo[] | null>(null);
   const [map, setMap] = useState<Mymap | null>(null);
   const [bounds, setBounds] = useState<LatLngBounds | undefined>();
